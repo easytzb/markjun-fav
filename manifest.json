@@ -1,0 +1,34 @@
+{
+	"name": "Mark君 网购收藏夹",
+	"description": "史上最强大的个人网购收藏夹，如果你认为他只是一款跨淘宝、天猫、京东、凡客的收藏夹，那就大错特错了，他更可以变价、上架、下架提醒哟，亲~",
+	"icons": { 
+		"16": "assets/images/logo-16.png",
+		"48": "assets/images/logo-48.png",
+		"128": "assets/images/logo-128.png" 
+	},
+	"permissions": [
+		"storage", "notifications", "tabs", "http://*/*"
+	],
+	"web_accessible_resources": [
+		"assets/images/surprise-48.png"
+	],
+	"content_scripts": [
+		{
+			"matches": ["http://detail.tmall.com/*","http://item.taobao.com/*","http://wt.taobao.com/*","http://www.360buy.com/product/*","http://item.vancl.com/*", "http://*.360buy.com/*.html","http://*.jd.com/*.html","http://www.jd.com/product/*"],
+			"js": ["assets/js/jquery-1.8.2.min.js", "assets/js/content-script.js"]
+		}
+	],	
+	"browser_action": {
+		"default_icon": {
+			"19": "assets/images/logo-19.png",
+			"38": "assets/images/logo-38.png"
+		},
+		"default_title": "Mark Jun",
+		"default_popup": "popup.html"
+  	},
+	"background": {
+		"scripts": ["assets/js/jquery-1.8.2.min.js", "assets/js/crypto-md5.js", "assets/js/common.js", "assets/js/background.js"]
+	},
+	"manifest_version": 2,
+	"version": "0.9.2"
+}
