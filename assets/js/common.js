@@ -7,7 +7,7 @@ var _markJun_ = {
         'tmall': '天猫',
         'vancl': '凡客'
     },
-    backend: 'http://1.markjun.duapp.com/',
+    backend: 'http://markjun.duapp.com/',
     numOfNotify: 0,
     getKey: function(url) {
         return "data_" + Crypto.MD5(url)
