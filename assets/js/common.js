@@ -129,10 +129,13 @@ var _markJun_ = {
         return this.getProductInfo(url)
     },
     getFromBae: function(url) {
-        var _url = url + '&_=' + (new Date()).valueOf();
+        var _url = url;
         $.ajax({
             url: this.backend,
-            data: _url,
+            data: {
+                url: encodeURIComponent(_url),
+                '_': (new Date()).valueOf()
+            },
             success: function(data) {
                 if (!data) return;
                 if (! (data = JSON.parse(data))) return;
@@ -213,16 +216,13 @@ var _markJun_ = {
         this.notifyWindows[this.notifyWindows.length] = tmp
     },
     updateInfo: function() {
-		var url = '';
         for (var key in localStorage) {
             if (key.indexOf('data_') !== 0) continue;
             var info = JSON.parse(localStorage[key]);
             var info = info.u;
-			url += 'url[]=' + info + '&';
+            _markJun_.getFromBae(info);
             _markJun_.totalCount++
         }
-		
-		_markJun_.getFromBae(url.replace(/\&$/, ''));
     },
     echo: function(str) {
         console.log(str)
