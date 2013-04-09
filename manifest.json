@@ -7,14 +7,14 @@
 		"128": "assets/images/logo-128.png" 
 	},
 	"permissions": [
-		"storage", "notifications", "tabs", "http://*/*"
+		"storage", "notifications", "tabs", "http://markjun.duapp.com/*"
 	],
 	"web_accessible_resources": [
 		"assets/images/surprise-48.png"
 	],
 	"content_scripts": [
 		{
-			"matches": ["http://detail.tmall.com/*","http://item.taobao.com/*","http://wt.taobao.com/*","http://www.360buy.com/product/*","http://item.vancl.com/*", "http://*.360buy.com/*.html","http://*.jd.com/*.html","http://www.jd.com/product/*"],
+			"matches": ["http://detail.tmall.com/*","http://item.taobao.com/*","http://wt.taobao.com/*","http://www.360buy.com/product/*","http://item.vancl.com/*","http://item.vt.vancl.com/*", "http://*.360buy.com/*.html","http://*.jd.com/*.html","http://www.jd.com/product/*"],
 			"js": ["assets/js/jquery-1.8.2.min.js", "assets/js/content-script.js"]
 		}
 	],	
