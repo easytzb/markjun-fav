@@ -139,8 +139,10 @@ var _markJun_ = {
                 '_': (new Date()).valueOf()
             },
             success: function(data) {
+				_markJun_.updateCount++;
                 if (!data) return;
                 if (! (data = JSON.parse(data))) return;
+				if (!data.t || !data.i) return;
                 if (_markJun_.checkExist(_url)) {
                     var oInfo = _markJun_.getProductInfo(_url);
                     if (typeof oInfo.o != 'undefined' && parseFloat(oInfo.o) != parseFloat(data.o)) {
@@ -157,8 +159,7 @@ var _markJun_ = {
                         data.utime = new Date().valueOf();
                         data.ov = oInfo.v
                     }
-                    _markJun_.editUrl(oInfo.u, data);
-                    _markJun_.updateCount++;
+                    _markJun_.editUrl(oInfo.u, data);                    
                     if (_markJun_.updateCount == _markJun_.totalCount) {
                         _markJun_.showNotify();
                         _markJun_.updateCount = _markJun_.totalCount = 0
