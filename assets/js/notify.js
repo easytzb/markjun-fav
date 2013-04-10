@@ -50,8 +50,7 @@
             }
         }
         if (html) $('#_content').append(html);
-        else $('.unread').html('暂时没有未处理的状态变化');		
-		chrome.extension.getBackgroundPage()._markJun_.echo(html);
+        else $('.unread').html('暂时没有未处理的状态变化');
         if (!_IS_DEFAULT_) chrome.extension.getBackgroundPage()._markJun_.stat('c1', data.length);
         data = null;
         $('.delButton').click(function() {
