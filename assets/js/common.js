@@ -47,6 +47,7 @@ var _markJun_ = {
         return true
     },
     delUrl: function(url) {
+		chrome.storage.sync.remove(_markJun_.getKey(url));
         var url = this.checkValid(url);
         if (!url) return false;
         localStorage.removeItem(this.getKey(url));

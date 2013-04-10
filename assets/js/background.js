@@ -34,8 +34,7 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
             ope: "new"
         });
         break;
-    case 'delUrl':
-        chrome.storage.sync.remove(_markJun_.getKey(url));
+    case 'delUrl':        
         _markJun_.delUrl(url);
         _markJun_.stat(2);
         break;
