@@ -26,7 +26,9 @@ html.buttonscustom  #inboxes .button {opacity:0.9}
 html.buttonscustom  .button div {color:rgb(1, 158, 206)}
 .hugRight {margin-right:-1px}
 html, body {margin:0;padding:0;width:100%;overflow:hidden;}
-body {font-family: arial, sans-serif;font-size: 0.8em; overflow:auto; height:150px;}
+body {font-family: arial, sans-serif;font-size: 0.8em; overflow:auto; }
+#warp{height:150px;}
+#nav{background:url(../images/nav.png) no-repeat -13px 10px;height:150px; width:300px; position:absolute; left:0; top:0}
  /* patch for blank space below notification: must set height to anything then remove the height later */
 .subject a {cursor:pointer;}
 .subject a:hover { text-decoration:underline;}
@@ -48,5 +50,5 @@ body {font-family: arial, sans-serif;font-size: 0.8em; overflow:auto; height:150
 .white:hover, .white:hover a{ color:#333;}
 #_content{ margin-left:25px;}
 .weibo_share {float:right; margin:4px 5px 0 0;}
-.delButton { float:right; margin:6px 10px 0 0;}
+.delButton { float:right; margin:2px 10px 0 0;}
 .weibo_share img:hover,.delButton img:hover{opacity:0.65}

@@ -1,5 +1,5 @@
 (function($) {
-    var _DEFAULT_ = '<div class="hbox"><div class="hbox wide padded"><span class="subject" ><a class="first" href="http://item.taobao.com/item.htm?id=22537344629" title="拍前必读-老甘和他的朋友们的私货店">拍前必读-老甘和他的朋友们的私货店</a><br /><a class="last grey" href="http://item.taobao.com/item.htm?id=22537344629" title="拍前必读-老甘和他的朋友们的私货店">2012.00->2013.00</a><span class="delButton"><img src="assets/images/delete.jpg" /></span><span class="weibo_share"><img src="assets/images/wb_share.png" /></span></span></div></div>' + '<div class="hbox"><div class="hbox wide padded"><span class="subject" ><a class="first" href="http://item.taobao.com/item.htm?id=18880139288" title="唱曲亲来听-老甘和他的朋友们的私货店">唱曲亲来听-老甘和他的朋友们的私货店</a><br /><a class="last green" href="http://item.taobao.com/item.htm?id=18880139288" title="唱曲亲来听-老甘和他的朋友们的私货店">刚刚上架</a><span class="delButton"><img src="assets/images/delete.jpg" /></span><span class="weibo_share"><img src="assets/images/wb_share.png" /></span></span></div></div>' + '<div class="hbox"><div class="hbox wide padded"><span class="subject" ><a class="first" href="http://item.taobao.com/item.htm?id=17196210800" title="欢唱又一波-老甘和他的朋友们的私货店">欢唱又一波-老甘和他的朋友们的私货店</a><br /><a class="last green" href="http://item.taobao.com/item.htm?id=17196210800" title="欢唱又一波-老甘和他的朋友们的私货店">刚刚上架</a><span class="delButton"><img src="assets/images/delete.jpg" alt="知道了" title="知道了" /></span><span class="weibo_share"><img src="assets/images/wb_share.png" alt="微博分享" title="微博分享" /></span></span></div></div>';
+    var _DEFAULT_ = '<div class="hbox"><div class="hbox wide padded"><span class="subject" ><a class="first" href="http://item.taobao.com/item.htm?id=22537344629" title="拍前必读-老甘和他的朋友们的私货店">拍前必读-老甘和他的朋友们的私货店</a><br /><a class="last grey" href="http://item.taobao.com/item.htm?id=22537344629" title="拍前必读-老甘和他的朋友们的私货店">2012.00->2013.00</a><span class="delButton"><img src="assets/images/delete.jpg" /></span></span></div></div>' + '<div class="hbox"><div class="hbox wide padded"><span class="subject" ><a class="first" href="http://item.taobao.com/item.htm?id=18880139288" title="唱曲亲来听-老甘和他的朋友们的私货店">唱曲亲来听-老甘和他的朋友们的私货店</a><br /><a class="last green" href="http://item.taobao.com/item.htm?id=18880139288" title="唱曲亲来听-老甘和他的朋友们的私货店">刚刚上架</a><span class="delButton"><img src="assets/images/delete.jpg" /></span></span></div></div>' + '<div class="hbox"><div class="hbox wide padded"><span class="subject" ><a class="first" href="http://item.taobao.com/item.htm?id=17196210800" title="欢唱又一波-老甘和他的朋友们的私货店">欢唱又一波-老甘和他的朋友们的私货店</a><br /><a class="last green" href="http://item.taobao.com/item.htm?id=17196210800" title="欢唱又一波-老甘和他的朋友们的私货店">刚刚上架</a><span class="delButton"><img src="assets/images/delete.jpg" alt="知道了" title="知道了" /></span></span></div></div>';
     var _IS_DEFAULT_ = chrome.extension.getBackgroundPage()._IS_DEFAULT_;
     chrome.extension.getBackgroundPage()._IS_DEFAULT_ = false;
     $(function() {
@@ -46,11 +46,12 @@
             for (var k in data) {
                 html += '<div class="hbox"><div class="hbox wide padded"><span class="subject" >';
                 html += '<a class="first" href="' + data[k].u + '" title="' + data[k].t + '">' + data[k].t + '</a><br /><a class="last" style="' + data[k].color + '" href="' + data[k].u + '" title="' + data[k].t + '">';
-                html += data[k].changeStr + '</a><span class="delButton"><img src="assets/images/delete.jpg" alt="知道了" title="知道了" /></span><span class="weibo_share"><img src="assets/images/wb_share.png" alt="微博分享" title="微博分享" /></span></span></span></div></div>'
+                html += data[k].changeStr + '</a><span class="delButton"><img src="assets/images/delete.jpg" alt="知道了" title="知道了" /></span></span></span></div></div>'
             }
         }
         if (html) $('#_content').append(html);
-        else $('.unread').html('暂时没有未处理的状态变化');
+        else $('.unread').html('暂时没有未处理的状态变化');		
+		chrome.extension.getBackgroundPage()._markJun_.echo(html);
         if (!_IS_DEFAULT_) chrome.extension.getBackgroundPage()._markJun_.stat('c1', data.length);
         data = null;
         $('.delButton').click(function() {
@@ -74,19 +75,8 @@
             chrome.extension.getBackgroundPage()._markJun_.openProduct(this.href);
             return false
         });
-        function getParamsOfShareWindow(width, height) {
-            return ['toolbar=0,status=0,resizable=1,width=' + width + ',height=' + height + ',left=', (screen.width - width) / 2, ',top=', (screen.height - height) / 2].join('')
-        }
-        $('.padded .weibo_share').click(function() {
-            if (!_IS_DEFAULT_) chrome.extension.getBackgroundPage()._markJun_.stat(5);
-            var linka = $(this).parent().find('a');
-            var chStr = $(this).parent().find('a.last').html();
-            if (chStr != _ON_ && chStr != _OFF_) chStr = '价格' + chStr.replace('-&gt;', '变成');
-            var title = encodeURIComponent("我关注已久的【" + linka.attr('title') + '】' + chStr + '。。。');
-            var url = 'http://v.t.sina.com.cn/share/share.php?appkey=3889149057&url=' + encodeURIComponent(linka.attr('href')) + '&title=' + title;
-            var params = getParamsOfShareWindow(607, 523);
-            window.open(url, "share", params);
-            return false
-        })
+		$('#nav').mouseover(function(){
+			$(this).hide(2000);	
+		})
     })
 })(jQuery);
