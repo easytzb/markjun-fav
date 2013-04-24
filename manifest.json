@@ -7,7 +7,7 @@
 		"128": "assets/images/logo-128.png" 
 	},
 	"permissions": [
-		"storage", "notifications", "tabs", "http://markjun.duapp.com/*"
+		"storage", "notifications", "tabs", "http://1.markjun.duapp.com/*","http://markjun.duapp.com/*"
 	],
 	"web_accessible_resources": [
 		"assets/images/surprise-48.png"
@@ -30,5 +30,5 @@
 		"scripts": ["assets/js/jquery-1.8.2.min.js", "assets/js/crypto-md5.js", "assets/js/common.js", "assets/js/background.js"]
 	},
 	"manifest_version": 2,
-	"version": "0.9.7"
+	"version": "0.9.9"
 }

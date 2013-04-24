@@ -180,6 +180,7 @@ var _markJun_ = {
             data: {
                 v: value,
                 t: encodeURIComponent(type),
+				appid:chrome.i18n.getMessage('@@extension_id'),
                 '_': (new Date()).valueOf()
             }
         })
