@@ -194,7 +194,7 @@ var _markJun_ = {
         else if (diff >= 3600 && diff < 86400) str = parseInt(diff / 3600) + " 小时前";
         else if (diff >= 86400 && diff < 86400 * 7) str = parseInt(diff / 86400) + " 天前";
         else if (diff >= 86400 * 7 && diff < 86400 * 30) str = parseInt(diff / 86400 / 7) + " 周前";
-        else if (diff >= 86400 * 30 && diff < 86400 * 365) str = parseInt(diff / 86400) + " 月前";
+        else if (diff >= 86400 * 30 && diff < 86400 * 365) str = parseInt(diff / 86400 / 30) + " 月前";
         else str = parseInt(diff / 86400 / 365) + " 年前";
         return str + '变动'
     },
