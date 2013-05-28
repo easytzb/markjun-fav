@@ -236,5 +236,6 @@ var _markJun_ = {
             this.notifyWindows[k].cancel()
         }
         this.notifyWindows = []
-    }
+    },
+	
 };

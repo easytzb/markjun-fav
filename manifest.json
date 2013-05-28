@@ -14,7 +14,7 @@
 	],
 	"content_scripts": [
 		{
-			"matches": ["http://detail.tmall.com/*","http://item.taobao.com/*","http://wt.taobao.com/*","http://www.360buy.com/product/*","http://item.vancl.com/*","http://item.vt.vancl.com/*", "http://*.360buy.com/*.html","http://*.jd.com/*.html","http://www.jd.com/product/*"],
+			"matches": ["http://detail.tmall.com/*","http://item.taobao.com/*","http://wt.taobao.com/*","http://www.360buy.com/product/*","http://item.vancl.com/*","http://item.vt.vancl.com/*", "http://*.360buy.com/*.html","http://*.jd.com/*"],
 			"js": ["assets/js/jquery-1.8.2.min.js", "assets/js/content-script.js"]
 		}
 	],	
@@ -30,5 +30,5 @@
 		"scripts": ["assets/js/jquery-1.8.2.min.js", "assets/js/crypto-md5.js", "assets/js/common.js", "assets/js/background.js"]
 	},
 	"manifest_version": 2,
-	"version": "0.9.9"
+	"version": "0.9.9.9.9"
 }
