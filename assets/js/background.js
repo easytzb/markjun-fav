@@ -5,7 +5,7 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
     for (key in changes) {
         var storageChange = changes[key];
         if (typeof storageChange.oldValue == 'undefined' && !_markJun_.checkExist(storageChange.newValue)) {
-			_markJun_.getFromBae(storageChange.newValue);
+			_markJun_.getFromBae('getPriceInfo', {url:storageChange.newValue});
 			chrome.extension.getBackgroundPage()._markJun_.stat('c2',1)
 		}
         else if (typeof storageChange.newValue == 'undefined') {
@@ -21,7 +21,7 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
     switch (request.ope) {
     case 'addUrl':
         chrome.storage.sync.set(JSON.parse('{"' + _markJun_.getKey(url) + '": "' + url + '"}'));
-        _markJun_.getFromBae(url);
+        _markJun_.getFromBae('getPriceInfo', {url:url});
         _markJun_.stat(1);
         break;
     case 'checkExist':
