@@ -130,49 +130,53 @@ var _markJun_ = {
     checkExist: function(url) {
         return this.getProductInfo(url)
     },
-    getFromBae: function(url) {
-        var _url = url;
+    getFromBae: function(act, praram) {
+		praram.act = act; 
+		praram._ = (new Date()).valueOf();
+		var successFunction = act + 'Success';
+		
         $.ajax({
             url: this.backend,
-            data: {
-                url: encodeURIComponent(_url),
-                '_': (new Date()).valueOf()
-            },
-            success: function(data) {
-				_markJun_.updateCount++;
-                if (!data) return;
-                if (! (data = JSON.parse(data))) return;
-				if (!data.t || !data.i) return;
-                if (_markJun_.checkExist(_url)) {
-                    var oInfo = _markJun_.getProductInfo(_url);
-                    if (typeof oInfo.o != 'undefined' && parseFloat(oInfo.o) != parseFloat(data.o)) {
-                        data.otime = new Date().valueOf();
-                        data.utime = new Date().valueOf()
-                    }
-                    if (typeof oInfo.p != 'undefined' && parseFloat(oInfo.p) != parseFloat(data.p)) {
-                        data.ptime = new Date().valueOf();
-                        data.utime = new Date().valueOf();
-                        data.op = oInfo.p
-                    }
-                    if (typeof oInfo.v != 'undefined' && parseFloat(oInfo.v) != parseFloat(data.v)) {
-                        data.vtime = new Date().valueOf();
-                        data.utime = new Date().valueOf();
-                        data.ov = oInfo.v
-                    }
-                    _markJun_.editUrl(oInfo.u, data);                    
-                    if (_markJun_.updateCount == _markJun_.totalCount) {
-                        _markJun_.showNotify();
-                        _markJun_.updateCount = _markJun_.totalCount = 0
-                    }
-                } else {
-                    _markJun_.saveUrl(data);
-                    chrome.tabs.sendMessage(_markJun_.tabid, {
-                        ope: "added"
-                    })
-                }
-            }
+            data: praram,
+            success: _markJun_[successFunction]
         })
     },
+	
+	getPriceInfoSuccess: function(data) {
+		_markJun_.updateCount++;		
+		if (!data) return;
+		if (! (data = JSON.parse(data))) return;
+		if (!data.t || !data.i || !data.u) return;
+		
+		if (_markJun_.checkExist(data.u)) {
+			var oInfo = _markJun_.getProductInfo(data.u);
+			if (typeof oInfo.o != 'undefined' && parseFloat(oInfo.o) != parseFloat(data.o)) {
+				data.otime = new Date().valueOf();
+				data.utime = new Date().valueOf()
+			}
+			if (typeof oInfo.p != 'undefined' && parseFloat(oInfo.p) != parseFloat(data.p)) {
+				data.ptime = new Date().valueOf();
+				data.utime = new Date().valueOf();
+				data.op = oInfo.p
+			}
+			if (typeof oInfo.v != 'undefined' && parseFloat(oInfo.v) != parseFloat(data.v)) {
+				data.vtime = new Date().valueOf();
+				data.utime = new Date().valueOf();
+				data.ov = oInfo.v
+			}
+			_markJun_.editUrl(oInfo.u, data);                    
+			if (_markJun_.updateCount == _markJun_.totalCount) {
+				_markJun_.showNotify();
+				_markJun_.updateCount = _markJun_.totalCount = 0
+			}
+		} else {
+			_markJun_.saveUrl(data);
+			chrome.tabs.sendMessage(_markJun_.tabid, {
+				ope: "added"
+			})
+		}
+	},
+	
     stat: function(type, value) {
         var value = value || 0;
         $.ajax({
@@ -185,6 +189,7 @@ var _markJun_ = {
             }
         })
     },
+	
     timeString: function(time) {
         var diff = parseInt(((new Date()).valueOf() - time) / 1000),
         str = '';
@@ -211,20 +216,39 @@ var _markJun_ = {
             }
             if (notNotify) return
         }
-        var tmp = webkitNotifications.createHTMLNotification('notification.html');
-        tmp.onclose = function() {
-            _markJun_.stat(12)
-        };
-        if (!window._IS_DEFAULT_ && !window._SHOW_BY_USER_) _markJun_.stat(11);
-        tmp.show();
-        this.notifyWindows[this.notifyWindows.length] = tmp
+		if (!chrome.notifications) {
+			var tmp = webkitNotifications.createHTMLNotification('notification.html');
+			tmp.onclose = function() {
+				_markJun_.stat(12)
+			};
+			if (!window._IS_DEFAULT_ && !window._SHOW_BY_USER_) _markJun_.stat(11);
+			tmp.show();
+			this.notifyWindows[this.notifyWindows.length] = tmp;
+		} else {
+			var opt = {
+				type: "list",
+				title: "Primary Title",
+				message: "Primary message to display",
+				iconUrl: "assets/images/surprise-32.png",
+				items: [{ title: "Item1", message: "This is item 1."},
+					  { title: "Item2", message: "This is item 2."},
+					  { title: "Item3", message: "This is item 3."}]
+			};
+			chrome.notifications.create("", opt, function(notificationId) {
+				if (chrome.extension.lastError) {
+					logError("create error: " + chrome.extension.lastError.message);
+				}
+				richNotifId = notificationId;
+				console.log(notificationId);
+			});
+		}
     },
     updateInfo: function() {
         for (var key in localStorage) {
             if (key.indexOf('data_') !== 0) continue;
             var info = JSON.parse(localStorage[key]);
             var info = info.u;
-            _markJun_.getFromBae(info);
+            _markJun_.getFromBae('getPriceInfo', {url:info});
             _markJun_.totalCount++
         }
     },
@@ -236,6 +260,5 @@ var _markJun_ = {
             this.notifyWindows[k].cancel()
         }
         this.notifyWindows = []
-    },
-	
+    }
 };
