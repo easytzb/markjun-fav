@@ -7,7 +7,7 @@
 		"128": "assets/images/logo-128.png" 
 	},
 	"permissions": [
-		"storage", "notifications", "tabs", "http://1.markjun.duapp.com/*","http://markjun.duapp.com/*"
+		"storage", "notifications", "tabs", "http://1.markjun.duapp.com/*","http://markjun.duapp.com/*","http://127.0.0.1:89/*"
 	],
 	"web_accessible_resources": [
 		"assets/images/surprise-48.png"

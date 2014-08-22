@@ -1,5 +1,5 @@
 var _markJun_ = {
-    validUrls: [/^(http\:\/\/www\.360buy\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.360buy\.com\/\d+\.html).*$/i, /^(http\:\/\/www\.jd\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.jd\.com\/\d+\.html).*$/i, /^(http\:\/\/item\.taobao\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/wt\.taobao\.com\/detail\.htm\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/venus\/spu_detail\.htm\?(.*?)spu_id\=\d+(.*?)\&mallstItemId\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http:\/\/item\.vancl\.com\/\d+\.html).*/i,/^(http:\/\/item\.vt\.vancl\.com\/\d+\.html).*/i],
+    validUrls: [/^(http\:\/\/www\.360buy\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.360buy\.com\/\d+\.html).*$/i, /^(http\:\/\/www\.jd\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.jd\.com\/\d+\.html).*$/i, /^(http\:\/\/item\.taobao\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/wt\.taobao\.com\/detail\.html?\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/venus\/spu_detail\.htm\?(.*?)spu_id\=\d+(.*?)\&mallstItemId\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http:\/\/item\.vancl\.com\/\d+\.html).*/i,/^(http:\/\/item\.vt\.vancl\.com\/\d+\.html).*/i],
     _from_: {
         '360buy': '京东',
         'jd': '京东',
@@ -8,7 +8,7 @@ var _markJun_ = {
         'vancl': '凡客',
 		'vt': '凡客'
     },
-    backend: 'http://markjun.duapp.com/',
+    backend: 'http://127.0.0.1:89/1/',
     numOfNotify: 0,
     getKey: function(url) {
         return "data_" + Crypto.MD5(url)
@@ -134,7 +134,7 @@ var _markJun_ = {
 		praram.act = act; 
 		praram._ = (new Date()).valueOf();
 		var successFunction = act + 'Success';
-		
+
         $.ajax({
             url: this.backend,
             data: praram,
@@ -216,32 +216,23 @@ var _markJun_ = {
             }
             if (notNotify) return
         }
-		if (!chrome.notifications) {
-			var tmp = webkitNotifications.createHTMLNotification('notification.html');
-			tmp.onclose = function() {
-				_markJun_.stat(12)
-			};
-			if (!window._IS_DEFAULT_ && !window._SHOW_BY_USER_) _markJun_.stat(11);
-			tmp.show();
-			this.notifyWindows[this.notifyWindows.length] = tmp;
-		} else {
-			var opt = {
-				type: "list",
-				title: "Primary Title",
-				message: "Primary message to display",
-				iconUrl: "assets/images/surprise-32.png",
-				items: [{ title: "Item1", message: "This is item 1."},
-					  { title: "Item2", message: "This is item 2."},
-					  { title: "Item3", message: "This is item 3."}]
-			};
-			chrome.notifications.create("", opt, function(notificationId) {
-				if (chrome.extension.lastError) {
-					logError("create error: " + chrome.extension.lastError.message);
-				}
-				richNotifId = notificationId;
-				console.log(notificationId);
-			});
-		}
+
+		var opt = {
+			type: "list",
+			title: "Primary Title",
+			message: "Primary message to display",
+			iconUrl: "assets/images/surprise-32.png",
+			items: [{ title: "Item1", message: "This is item 1."},
+				  { title: "Item2", message: "This is item 2."},
+				  { title: "Item3", message: "This is item 3."}]
+		};
+		chrome.notifications.create("", opt, function(notificationId) {
+			if (chrome.extension.lastError) {
+				logError("create error: " + chrome.extension.lastError.message);
+			}
+			richNotifId = notificationId;
+			console.log(notificationId);
+		});
     },
     updateInfo: function() {
         for (var key in localStorage) {
