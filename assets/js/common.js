@@ -8,7 +8,7 @@ var _markJun_ = {
         'vancl': '凡客',
 		'vt': '凡客'
     },
-    backend: 'http://127.0.0.1:89/1/',
+    backend: 'http://127.0.0.1:89/',
     numOfNotify: 0,
     getKey: function(url) {
         return "data_" + Crypto.MD5(url)
@@ -206,29 +206,34 @@ var _markJun_ = {
     showNotify: function() {
         if (!window._IS_DEFAULT_) {
             var notNotify = true;
+            var items = new Array();
             for (var key in localStorage) {
                 if (key.indexOf('data_') !== 0) continue;
                 var info = JSON.parse(localStorage[key]);
                 if (info.otime || info.ptime || info.vtime) {
-                    notNotify = false;
-                    break
+                    items.push({title:info.t, message:'mes'})
                 }
             }
-            if (notNotify) return
         }
+
+        if(!items.length) return false;
 
 		var opt = {
 			type: "list",
-			title: "Primary Title",
-			message: "Primary message to display",
-			iconUrl: "assets/images/surprise-32.png",
-			items: [{ title: "Item1", message: "This is item 1."},
-				  { title: "Item2", message: "This is item 2."},
-				  { title: "Item3", message: "This is item 3."}]
+			title: "变动的商品",
+			message: "zero",
+			iconUrl: "assets/images/icon_128_whitebg.png",
+			items: items,
+            //eventTime:Date.now() + 1000,
+            isClickable:true,
+            buttons:[
+                {title:'打开(所有)变动商品',iconUrl:'assets/images/checkmark.png'},
+                {title:'忽略(所有)变动商品',iconUrl:'assets/images/cancel.png'}
+            ]
 		};
 		chrome.notifications.create("", opt, function(notificationId) {
 			if (chrome.extension.lastError) {
-				logError("create error: " + chrome.extension.lastError.message);
+				console.log("create error: " + chrome.extension.lastError.message);
 			}
 			richNotifId = notificationId;
 			console.log(notificationId);
