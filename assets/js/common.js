@@ -74,10 +74,29 @@ var _markJun_ = {
         }
         return data
     },
-    openProduct: function(url) {
-        chrome.tabs.create({
-            url: url
-        })
+    clearChangedInfo: function() {
+        for (var key in localStorage) {
+            if (key.indexOf('data_') !== 0) continue;
+            var info = JSON.parse(localStorage[key]);
+            if (info.otime || info.ptime || info.vtime) {
+                _markJun_.editUrl(info.u, {
+                    op: null,
+                    ptime: null,
+                    otime: null,
+                    vtime: null,
+                    ov: null
+                })
+            }
+        }
+    },
+    openProduct: function() {
+        for (var key in localStorage) {
+            if (key.indexOf('data_') !== 0) continue;
+            var info = JSON.parse(localStorage[key]);
+            if (info.otime || info.ptime || info.vtime) {
+                chrome.tabs.create({url: info.u});
+            }
+        }
     },
     downOrUp: function(info) {
         info.op = parseFloat(info.op);
@@ -108,22 +127,25 @@ var _markJun_ = {
     },
     changeString: function(info) {
         var changeStr = "";
-        var _OFF_ = '刚下架 ';
-        var _ON_ = '刚上架 ';
+        var _OFF_ = 'OFF';
+        var _ON_ = 'ON';
         if (info.otime) {
             changeStr += info.o ? _OFF_: _ON_
         }
         var sperator = ' ';
         if (!info.o && info.ptime) {
+            changeStr += changeStr?':':'';
             var oldPrice = parseFloat(info.op).toFixed(2);
             var newPrice = parseFloat(info.p).toFixed(2);
-            changeStr += oldPrice + '->' + newPrice + "";
-            sperator = ' | '
+            if (oldPrice > newPrice) changeStr += '↓';
+            else changeStr += '↑';
         }
         if (!info.o && info.vtime) {
+            changeStr += changeStr?':':'';
             var oldPrice = parseFloat(info.ov).toFixed(2);
             var newPrice = parseFloat(info.v).toFixed(2);
-            changeStr += sperator + oldPrice + '(V)->' + newPrice + "(V)"
+            if (oldPrice > newPrice) changeStr += 'V↓';
+            else changeStr += 'V↑';
         }
         return changeStr
     },
@@ -211,7 +233,8 @@ var _markJun_ = {
                 if (key.indexOf('data_') !== 0) continue;
                 var info = JSON.parse(localStorage[key]);
                 if (info.otime || info.ptime || info.vtime) {
-                    items.push({title:info.t, message:'mes'})
+                    var title = _markJun_.changeString(info);
+                    items.push({title:(title+':'+info.t), message:'mes'})
                 }
             }
         }
@@ -231,13 +254,20 @@ var _markJun_ = {
                 {title:'忽略(所有)变动商品',iconUrl:'assets/images/cancel.png'}
             ]
 		};
+        var notifyId = null;
 		chrome.notifications.create("", opt, function(notificationId) {
 			if (chrome.extension.lastError) {
 				console.log("create error: " + chrome.extension.lastError.message);
 			}
-			richNotifId = notificationId;
-			console.log(notificationId);
+			notifyId = notificationId;
 		});
+        chrome.notifications.onButtonClicked.addListener(function(nid, index){
+            if (nid != notifyId) return;
+            if (0 == index) {
+                _markJun_.openProduct();
+            }
+            _markJun_.clearChangedInfo();
+        })
     },
     updateInfo: function() {
         for (var key in localStorage) {
