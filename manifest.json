@@ -1,34 +1,30 @@
 {
-	"name": "Mark君 网购收藏夹",
-	"description": "史上最强大的个人网购收藏夹，如果你认为他只是一款跨淘宝、天猫、京东、凡客的收藏夹，那就大错特错了，他更可以变价、上架、下架提醒哟，亲~",
-	"icons": { 
-		"16": "assets/images/logo-16.png",
-		"48": "assets/images/logo-48.png",
-		"128": "assets/images/logo-128.png" 
-	},
-	"permissions": [
-		"storage", "notifications", "tabs", "http://1.markjun.duapp.com/*","http://markjun.duapp.com/*","http://127.0.0.1:89/*"
-	],
-	"web_accessible_resources": [
-		"assets/images/surprise-48.png"
-	],
-	"content_scripts": [
-		{
-			"matches": ["http://detail.tmall.com/*","http://item.taobao.com/*","http://wt.taobao.com/*","http://www.360buy.com/product/*","http://item.vancl.com/*","http://item.vt.vancl.com/*", "http://*.360buy.com/*.html","http://*.jd.com/*"],
-			"js": ["assets/js/jquery-1.8.2.min.js", "assets/js/content-script.js"]
-		}
-	],	
-	"browser_action": {
-		"default_icon": {
-			"19": "assets/images/logo-19.png",
-			"38": "assets/images/logo-38.png"
-		},
-		"default_title": "Mark Jun",
-		"default_popup": "popup.html"
-  	},
-	"background": {
-		"scripts": ["assets/js/jquery-1.8.2.min.js", "assets/js/crypto-md5.js", "assets/js/common.js", "assets/js/background.js"]
-	},
-	"manifest_version": 2,
-	"version": "0.9.9.9"
+   "background": {
+      "scripts": [ "assets/js/jquery-1.8.2.min.js", "assets/js/crypto-md5.js", "assets/js/common.js", "assets/js/background.js" ]
+   },
+   "browser_action": {
+      "default_icon": {
+         "19": "assets/images/logo-19.png",
+         "38": "assets/images/logo-38.png"
+      },
+      "default_popup": "popup.html",
+      "default_title": "Mark Jun"
+   },
+   "content_scripts": [ {
+      "js": [ "assets/js/jquery-1.8.2.min.js", "assets/js/content-script.js" ],
+      "matches": [ "http://detail.tmall.com/*", "http://item.taobao.com/*", "http://wt.taobao.com/*", "http://www.360buy.com/product/*", "http://item.vancl.com/*", "http://item.vt.vancl.com/*", "http://*.360buy.com/*.html", "http://*.jd.com/*" ]
+   } ],
+   "description": "史上最强大的个人网购收藏夹，如果你认为他只是一款跨淘宝、天猫、京东、凡客的收藏夹，那就大错特错了，他更可以变价、上架、下架提醒哟，亲~",
+   "icons": {
+      "128": "assets/images/logo-128.png",
+      "16": "assets/images/logo-16.png",
+      "48": "assets/images/logo-48.png"
+   },
+   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCvs6lVErRX8TlhkWSzLei3MBHJtn0c2LqITldFgdZ4WSw4fDdOyy0Zcixn1gsys/oxZrxleeBPytJcHwpjAA2b3L4m84qKR3ttiPUcs2WB9V+n4CVq6NX+yUrLRfpW87r4FRE2KEIdoMP2WqYVJbneZJw1eNk+HeCsjWMxy8QubQIDAQAB",
+   "manifest_version": 2,
+   "name": "Mark君 网购收藏夹",
+   "permissions": [ "storage", "notifications", "tabs", "http://1.markjun.duapp.com/*", "http://markjun.duapp.com/*", "http://127.0.0.1:89/*" ],
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "1.0",
+   "web_accessible_resources": [ "assets/images/surprise-48.png" ]
 }
