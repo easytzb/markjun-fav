@@ -8,7 +8,7 @@ var _markJun_ = {
         'vancl': '凡客',
 		'vt': '凡客'
     },
-    backend: 'http://127.0.0.1:89/',
+    backend: 'http://markjun.duapp.com/',
     numOfNotify: 0,
     getKey: function(url) {
         return "data_" + Crypto.MD5(url)
@@ -26,7 +26,7 @@ var _markJun_ = {
                     if (isNaN(parseInt(j))) break;
                     reg[1] = reg[1].replace(reg[j], '')
                 }
-                return reg[1]
+                return reg[1].replace('item.vt.vancl', 'item.vancl');
             }
         }
         return false

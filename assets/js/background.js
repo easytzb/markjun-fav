@@ -43,6 +43,6 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
         break
     }
 });
-//window.setInterval(_markJun_.updateInfo, 600000);
-window.setTimeout(_markJun_.updateInfo, 1000);
+window.setInterval(_markJun_.updateInfo, 600000);
+window.setTimeout(_markJun_.updateInfo, 5000);
 
