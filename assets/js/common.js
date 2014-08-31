@@ -1,12 +1,13 @@
 var _markJun_ = {
-    validUrls: [/^(http\:\/\/www\.360buy\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.360buy\.com\/\d+\.html).*$/i, /^(http\:\/\/www\.jd\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.jd\.com\/\d+\.html).*$/i, /^(http\:\/\/item\.taobao\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/wt\.taobao\.com\/detail\.html?\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/venus\/spu_detail\.htm\?(.*?)spu_id\=\d+(.*?)\&mallstItemId\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http:\/\/item\.vancl\.com\/\d+\.html).*/i,/^(http:\/\/item\.vt\.vancl\.com\/\d+\.html).*/i],
+    validUrls: [/^(http\:\/\/www\.360buy\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.360buy\.com\/\d+\.html).*$/i, /^(http\:\/\/www\.jd\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.jd\.com\/\d+\.html).*$/i, /^(http\:\/\/item\.taobao\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/wt\.taobao\.com\/detail\.html?\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/venus\/spu_detail\.htm\?(.*?)spu_id\=\d+(.*?)\&mallstItemId\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http:\/\/item\.vancl\.com\/\d+\.html).*/i,/^(http:\/\/item\.vt\.vancl\.com\/\d+\.html).*/i, /^(http:\/\/www\.amazon\.cn\/(.*?)dp\/[A-Z0-9]*?($|\/.*$))/i, /^(http:\/\/www\.amazon\.cn\/gp\/product\/[^\/]*?.*$)/i ],
     _from_: {
         '360buy': '京东',
         'jd': '京东',
         'taobao': '淘宝',
         'tmall': '天猫',
         'vancl': '凡客',
-		'vt': '凡客'
+		'vt': '凡客',
+        'amazon': '亚马逊'
     },
     backend: 'http://markjun.duapp.com/',
     numOfNotify: 0,
@@ -26,7 +27,9 @@ var _markJun_ = {
                     if (isNaN(parseInt(j))) break;
                     reg[1] = reg[1].replace(reg[j], '')
                 }
-                return reg[1].replace('item.vt.vancl', 'item.vancl');
+                res = reg[1].replace('item.vt.vancl', 'item.vancl');
+                res = res.replace('zon.cn/dp', 'zon.cn/gp/product');
+                return res;
             }
         }
         return false
@@ -150,6 +153,7 @@ var _markJun_ = {
         return changeStr
     },
     checkExist: function(url) {
+        console.log(url)
         return this.getProductInfo(url)
     },
     getFromBae: function(act, praram) {
