@@ -152,8 +152,7 @@ var _markJun_ = {
         }
         return changeStr
     },
-    checkExist: function(url) {
-        console.log(url)
+    checkExist: function(url) {        
         return this.getProductInfo(url)
     },
     getFromBae: function(act, praram) {
