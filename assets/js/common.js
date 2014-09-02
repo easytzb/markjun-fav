@@ -6,9 +6,9 @@ var _markJun_ = {
         'taobao': '淘宝',
         'tmall': '天猫',
         'vancl': '凡客',
-		'vt': '凡客',
+        'vt': '凡客',
         'amazon': '亚马逊'
-    },
+    },    
     backend: 'http://markjun.duapp.com/',
     numOfNotify: 0,
     getKey: function(url) {
@@ -50,7 +50,7 @@ var _markJun_ = {
         return true
     },
     delUrl: function(url) {
-		chrome.storage.sync.remove(_markJun_.getKey(url));
+        chrome.storage.sync.remove(_markJun_.getKey(url));
         var url = this.checkValid(url);
         if (!url) return false;
         localStorage.removeItem(this.getKey(url));
@@ -156,9 +156,9 @@ var _markJun_ = {
         return this.getProductInfo(url)
     },
     getFromBae: function(act, praram) {
-		praram.act = act; 
-		praram._ = (new Date()).valueOf();
-		var successFunction = act + 'Success';
+        praram.act = act; 
+        praram._ = (new Date()).valueOf();
+        var successFunction = act + 'Success';
 
         $.ajax({
             url: this.backend,
@@ -166,42 +166,42 @@ var _markJun_ = {
             success: _markJun_[successFunction]
         })
     },
-	
-	getPriceInfoSuccess: function(data) {
-		_markJun_.updateCount++;		
-		if (!data) return;
-		if (! (data = JSON.parse(data))) return;
-		if (!data.t || !data.i || !data.u) return;
-		
-		if (_markJun_.checkExist(data.u)) {
-			var oInfo = _markJun_.getProductInfo(data.u);
-			if (typeof oInfo.o != 'undefined' && parseFloat(oInfo.o) != parseFloat(data.o)) {
-				data.otime = new Date().valueOf();
-				data.utime = new Date().valueOf()
-			}
-			if (typeof oInfo.p != 'undefined' && parseFloat(oInfo.p) != parseFloat(data.p)) {
-				data.ptime = new Date().valueOf();
-				data.utime = new Date().valueOf();
-				data.op = oInfo.p
-			}
-			if (typeof oInfo.v != 'undefined' && parseFloat(oInfo.v) != parseFloat(data.v)) {
-				data.vtime = new Date().valueOf();
-				data.utime = new Date().valueOf();
-				data.ov = oInfo.v
-			}
-			_markJun_.editUrl(oInfo.u, data);                    
-			if (_markJun_.updateCount == _markJun_.totalCount) {
-				_markJun_.showNotify();
-				_markJun_.updateCount = _markJun_.totalCount = 0
-			}
-		} else {
-			_markJun_.saveUrl(data);
-			chrome.tabs.sendMessage(_markJun_.tabid, {
-				ope: "added"
-			})
-		}
-	},
-	
+    
+    getPriceInfoSuccess: function(data) {
+        _markJun_.updateCount++;        
+        if (!data) return;
+        if (! (data = JSON.parse(data))) return;
+        if (!data.t || !data.i || !data.u) return;
+        
+        if (_markJun_.checkExist(data.u)) {
+            var oInfo = _markJun_.getProductInfo(data.u);
+            if (typeof oInfo.o != 'undefined' && parseFloat(oInfo.o) != parseFloat(data.o)) {
+                data.otime = new Date().valueOf();
+                data.utime = new Date().valueOf()
+            }
+            if (typeof oInfo.p != 'undefined' && parseFloat(oInfo.p) != parseFloat(data.p)) {
+                data.ptime = new Date().valueOf();
+                data.utime = new Date().valueOf();
+                data.op = oInfo.p
+            }
+            if (typeof oInfo.v != 'undefined' && parseFloat(oInfo.v) != parseFloat(data.v)) {
+                data.vtime = new Date().valueOf();
+                data.utime = new Date().valueOf();
+                data.ov = oInfo.v
+            }
+            _markJun_.editUrl(oInfo.u, data);                    
+            if (_markJun_.updateCount == _markJun_.totalCount) {
+                _markJun_.showNotify();
+                _markJun_.updateCount = _markJun_.totalCount = 0
+            }
+        } else {
+            _markJun_.saveUrl(data);
+            chrome.tabs.sendMessage(_markJun_.tabid, {
+                ope: "added"
+            })
+        }
+    },
+    
     stat: function(type, value) {
         var value = value || 0;
         $.ajax({
@@ -209,12 +209,12 @@ var _markJun_ = {
             data: {
                 v: value,
                 t: encodeURIComponent(type),
-				appid:chrome.i18n.getMessage('@@extension_id'),
+                appid:chrome.i18n.getMessage('@@extension_id'),
                 '_': (new Date()).valueOf()
             }
         })
     },
-	
+    
     timeString: function(time) {
         var diff = parseInt(((new Date()).valueOf() - time) / 1000),
         str = '';
@@ -244,26 +244,26 @@ var _markJun_ = {
 
         if(!items.length) return false;
 
-		var opt = {
-			type: "list",
-			title: "变动的商品",
-			message: "zero",
-			iconUrl: "assets/images/icon_128_whitebg.png",
-			items: items,
+        var opt = {
+            type: "list",
+            title: "变动的商品",
+            message: "zero",
+            iconUrl: "assets/images/icon_128_whitebg.png",
+            items: items,
             //eventTime:Date.now() + 1000,
             isClickable:true,
             buttons:[
                 {title:'打开(所有)变动商品',iconUrl:'assets/images/checkmark.png'},
                 {title:'忽略(所有)变动商品',iconUrl:'assets/images/cancel.png'}
             ]
-		};
+        };
         var notifyId = null;
-		chrome.notifications.create("", opt, function(notificationId) {
-			if (chrome.extension.lastError) {
-				console.log("create error: " + chrome.extension.lastError.message);
-			}
-			notifyId = notificationId;
-		});
+        chrome.notifications.create("", opt, function(notificationId) {
+            if (chrome.extension.lastError) {
+                console.log("create error: " + chrome.extension.lastError.message);
+            }
+            notifyId = notificationId;
+        });
         chrome.notifications.onButtonClicked.addListener(function(nid, index){
             if (nid != notifyId) return;
             if (0 == index) {
