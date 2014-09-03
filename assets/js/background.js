@@ -6,11 +6,9 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
         var storageChange = changes[key];
         if (typeof storageChange.oldValue == 'undefined' && !_markJun_.checkExist(storageChange.newValue)) {
 			_markJun_.getFromBae('getPriceInfo', {url:storageChange.newValue});
-			chrome.extension.getBackgroundPage()._markJun_.stat('c2',1)
 		}
         else if (typeof storageChange.newValue == 'undefined') {
 			_markJun_.delUrl(storageChange.oldValue)
-			chrome.extension.getBackgroundPage()._markJun_.stat('c2',-1)
 		}
     }
 });

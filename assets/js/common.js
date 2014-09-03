@@ -9,7 +9,8 @@ var _markJun_ = {
         'vt': '凡客',
         'amazon': '亚马逊'
     },    
-    backend: 'http://markjun.duapp.com/',
+	//backend: 'http://127.0.0.1:89/',
+	backend: 'http://markjun.duapp.com/',
     numOfNotify: 0,
     getKey: function(url) {
         return "data_" + Crypto.MD5(url)
@@ -229,9 +230,9 @@ var _markJun_ = {
         return str + '变动'
     },
     showNotify: function() {
+		var items = new Array();
         if (!window._IS_DEFAULT_) {
-            var notNotify = true;
-            var items = new Array();
+            var notNotify = true;            
             for (var key in localStorage) {
                 if (key.indexOf('data_') !== 0) continue;
                 var info = JSON.parse(localStorage[key]);
@@ -243,6 +244,7 @@ var _markJun_ = {
         }
 
         if(!items.length) return false;
+		_markJun_.stat(11);
 
         var opt = {
             type: "list",
@@ -258,18 +260,24 @@ var _markJun_ = {
             ]
         };
         var notifyId = null;
-        chrome.notifications.create("", opt, function(notificationId) {
+        chrome.notifications.create("", opt, function(nid) {
             if (chrome.extension.lastError) {
                 console.log("create error: " + chrome.extension.lastError.message);
             }
-            notifyId = notificationId;
+            notifyId = nid;
         });
         chrome.notifications.onButtonClicked.addListener(function(nid, index){
             if (nid != notifyId) return;
             if (0 == index) {
+				_markJun_.stat(6);
                 _markJun_.openProduct();
-            }
+            } else _markJun_.stat(7);
             _markJun_.clearChangedInfo();
+        });
+
+		chrome.notifications.onClosed.addListener(function(nid, byUser){
+            if (nid != notifyId) return;
+            if (byUser) _markJun_.stat(12);
         })
     },
     updateInfo: function() {
@@ -283,11 +291,5 @@ var _markJun_ = {
     },
     echo: function(str) {
         console.log(str)
-    },
-    clearNotify: function() {
-        for (var k in this.notifyWindows) {
-            this.notifyWindows[k].cancel()
-        }
-        this.notifyWindows = []
     }
 };
