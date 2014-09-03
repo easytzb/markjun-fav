@@ -25,6 +25,6 @@
    "name": "Mark君 网购收藏夹",
    "permissions": [ "storage", "notifications", "tabs", "http://1.markjun.duapp.com/*", "http://markjun.duapp.com/*", "http://127.0.0.1:89/*" ],
    "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "1.0",
+   "version": "1.1",
    "web_accessible_resources": [ "assets/images/surprise-48.png" ]
 }
