@@ -12,6 +12,7 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
 		}
     }
 });
+
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
     var url = _markJun_.checkValid(request.u);
     if (!url) return;
@@ -41,6 +42,9 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
         break
     }
 });
+
+var contextMenusId = chrome.contextMenus.create({"documentUrlPatterns":["http://www.360buy.com/product/*.html*", "http://*.360buy.com/*.html*", "http://www.jd.com/product/*.html*", "http://*.jd.com/*.html*", "http://item.taobao.com/item.htm*id=*", "http://wt.taobao.com/detail.html*id=*", "http://detail.tmall.com/venus/spu_detail.htm*spu_id=*mallstItemId=*", "http://detail.tmall.com/item.htm*id*", "http://item.vancl.com/*.html*", "http://item.vt.vancl.com/*.html*", "http://www.amazon.cn/*dp*", "http://www.amazon.cn/gp/product/*"],"title": "mark君·网购收藏夹", "contexts":["page"]});
+
 window.setInterval(_markJun_.updateInfo, 600000);
 window.setTimeout(_markJun_.updateInfo, 5000);
 
