@@ -1,5 +1,5 @@
 var _markJun_ = {
-    validUrls: [/^(http\:\/\/www\.360buy\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.360buy\.com\/\d+\.html).*$/i, /^(http\:\/\/www\.jd\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.jd\.com\/\d+\.html).*$/i, /^(http\:\/\/item\.taobao\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/wt\.taobao\.com\/detail\.html?\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/venus\/spu_detail\.htm\?(.*?)spu_id\=\d+(.*?)\&mallstItemId\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http:\/\/item\.vancl\.com\/\d+\.html).*/i,/^(http:\/\/item\.vt\.vancl\.com\/\d+\.html).*/i, /^(http:\/\/www\.amazon\.cn\/(.*?)dp\/[A-Z0-9]*?($|\/.*$))/i, /^(http:\/\/www\.amazon\.cn\/gp\/product\/[^\/]*?.*$)/i ],
+    validUrls: [/^(http\:\/\/www\.360buy\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.360buy\.com\/\d+\.html).*$/i, /^(http\:\/\/www\.jd\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.jd\.com\/\d+\.html).*$/i, /^(http\:\/\/item\.taobao\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/wt\.taobao\.com\/detail\.html?\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/venus\/spu_detail\.htm\?(.*?)spu_id\=\d+(.*?)\&mallstItemId\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http:\/\/item\.vancl\.com\/\d+\.html).*/i, /^(http:\/\/item\.vt\.vancl\.com\/\d+\.html).*/i, /^(http:\/\/www\.amazon\.cn\/(.*?)dp\/[A-Z0-9]*?($|\/.*$))/i, /^(http:\/\/www\.amazon\.cn\/gp\/product\/[^\/]*?.*$)/i],
     _from_: {
         '360buy': '京东',
         'jd': '京东',
@@ -8,12 +8,12 @@ var _markJun_ = {
         'vancl': '凡客',
         'vt': '凡客',
         'amazon': '亚马逊'
-    },    
-	//backend: 'http://127.0.0.1:89/',
-	backend: 'http://markjun.duapp.com/',
+    },
+    //backend: 'http://127.0.0.1:89/',
+    backend: 'http://markjun.duapp.com/',
     numOfNotify: 0,
     getKey: function(url) {
-        return "data_" + Crypto.MD5(url)
+        return "data_" + Crypto.MD5(url);
     },
     tabid: 0,
     updateCount: 0,
@@ -26,14 +26,14 @@ var _markJun_ = {
                 for (var j in reg) {
                     if (j < 2) continue;
                     if (isNaN(parseInt(j))) break;
-                    reg[1] = reg[1].replace(reg[j], '')
+                    reg[1] = reg[1].replace(reg[j], '');
                 }
                 res = reg[1].replace('item.vt.vancl', 'item.vancl');
                 res = res.replace('zon.cn/dp', 'zon.cn/gp/product');
                 return res;
             }
         }
-        return false
+        return false;
     },
     getProductInfo: function(url) {
         var url = this.checkValid(url);
@@ -98,7 +98,9 @@ var _markJun_ = {
             if (key.indexOf('data_') !== 0) continue;
             var info = JSON.parse(localStorage[key]);
             if (info.otime || info.ptime || info.vtime) {
-                chrome.tabs.create({url: info.u});
+                chrome.tabs.create({
+                    url: info.u
+                });
             }
         }
     },
@@ -134,18 +136,18 @@ var _markJun_ = {
         var _OFF_ = 'OFF';
         var _ON_ = 'ON';
         if (info.otime) {
-            changeStr += info.o ? _OFF_: _ON_
+            changeStr += info.o ? _OFF_ : _ON_
         }
         var sperator = ' ';
         if (!info.o && info.ptime) {
-            changeStr += changeStr?':':'';
+            changeStr += changeStr ? ':' : '';
             var oldPrice = parseFloat(info.op).toFixed(2);
             var newPrice = parseFloat(info.p).toFixed(2);
             if (oldPrice > newPrice) changeStr += '↓';
             else changeStr += '↑';
         }
         if (!info.o && info.vtime) {
-            changeStr += changeStr?':':'';
+            changeStr += changeStr ? ':' : '';
             var oldPrice = parseFloat(info.ov).toFixed(2);
             var newPrice = parseFloat(info.v).toFixed(2);
             if (oldPrice > newPrice) changeStr += 'V↓';
@@ -153,11 +155,11 @@ var _markJun_ = {
         }
         return changeStr
     },
-    checkExist: function(url) {        
+    checkExist: function(url) {
         return this.getProductInfo(url)
     },
     getFromBae: function(act, praram) {
-        praram.act = act; 
+        praram.act = act;
         praram._ = (new Date()).valueOf();
         var successFunction = act + 'Success';
 
@@ -167,13 +169,13 @@ var _markJun_ = {
             success: _markJun_[successFunction]
         })
     },
-    
+
     getPriceInfoSuccess: function(data) {
-        _markJun_.updateCount++;        
+        _markJun_.updateCount++;
         if (!data) return;
-        if (! (data = JSON.parse(data))) return;
+        if (!(data = JSON.parse(data))) return;
         if (!data.t || !data.i || !data.u) return;
-        
+
         if (_markJun_.checkExist(data.u)) {
             var oInfo = _markJun_.getProductInfo(data.u);
             if (typeof oInfo.o != 'undefined' && parseFloat(oInfo.o) != parseFloat(data.o)) {
@@ -190,7 +192,7 @@ var _markJun_ = {
                 data.utime = new Date().valueOf();
                 data.ov = oInfo.v
             }
-            _markJun_.editUrl(oInfo.u, data);                    
+            _markJun_.editUrl(oInfo.u, data);
             if (_markJun_.updateCount == _markJun_.totalCount) {
                 _markJun_.showNotify();
                 _markJun_.updateCount = _markJun_.totalCount = 0
@@ -202,7 +204,7 @@ var _markJun_ = {
             })
         }
     },
-    
+
     stat: function(type, value) {
         var value = value || 0;
         $.ajax({
@@ -210,15 +212,15 @@ var _markJun_ = {
             data: {
                 v: value,
                 t: encodeURIComponent(type),
-                appid:chrome.i18n.getMessage('@@extension_id'),
+                appid: chrome.i18n.getMessage('@@extension_id'),
                 '_': (new Date()).valueOf()
             }
         })
     },
-    
+
     timeString: function(time) {
         var diff = parseInt(((new Date()).valueOf() - time) / 1000),
-        str = '';
+            str = '';
         if (diff < 0) str = "刚刚的";
         else if (diff < 60) str = diff + " 秒前";
         else if (diff >= 60 && diff < 3600) str = parseInt(diff / 60) + " 分前";
@@ -230,21 +232,24 @@ var _markJun_ = {
         return str + '变动'
     },
     showNotify: function() {
-		var items = new Array();
+        var items = new Array();
         if (!window._IS_DEFAULT_) {
-            var notNotify = true;            
+            var notNotify = true;
             for (var key in localStorage) {
                 if (key.indexOf('data_') !== 0) continue;
                 var info = JSON.parse(localStorage[key]);
                 if (info.otime || info.ptime || info.vtime) {
                     var title = _markJun_.changeString(info);
-                    items.push({title:(title+':'+info.t), message:'mes'})
+                    items.push({
+                        title: (title + ':' + info.t),
+                        message: 'mes'
+                    })
                 }
             }
         }
 
-        if(!items.length) return false;
-		_markJun_.stat(11);
+        if (!items.length) return false;
+        _markJun_.stat(11);
 
         var opt = {
             type: "list",
@@ -253,11 +258,14 @@ var _markJun_ = {
             iconUrl: "assets/images/icon_128_whitebg.png",
             items: items,
             //eventTime:Date.now() + 1000,
-            isClickable:true,
-            buttons:[
-                {title:'打开(所有)变动商品',iconUrl:'assets/images/checkmark.png'},
-                {title:'忽略(所有)变动商品',iconUrl:'assets/images/cancel.png'}
-            ]
+            isClickable: true,
+            buttons: [{
+                title: '打开(所有)变动商品',
+                iconUrl: 'assets/images/checkmark.png'
+            }, {
+                title: '忽略(所有)变动商品',
+                iconUrl: 'assets/images/cancel.png'
+            }]
         };
         var notifyId = null;
         chrome.notifications.create("", opt, function(nid) {
@@ -266,16 +274,16 @@ var _markJun_ = {
             }
             notifyId = nid;
         });
-        chrome.notifications.onButtonClicked.addListener(function(nid, index){
+        chrome.notifications.onButtonClicked.addListener(function(nid, index) {
             if (nid != notifyId) return;
             if (0 == index) {
-				_markJun_.stat(6);
+                _markJun_.stat(6);
                 _markJun_.openProduct();
             } else _markJun_.stat(7);
             _markJun_.clearChangedInfo();
         });
 
-		chrome.notifications.onClosed.addListener(function(nid, byUser){
+        chrome.notifications.onClosed.addListener(function(nid, byUser) {
             if (nid != notifyId) return;
             if (byUser) _markJun_.stat(12);
         })
@@ -285,7 +293,9 @@ var _markJun_ = {
             if (key.indexOf('data_') !== 0) continue;
             var info = JSON.parse(localStorage[key]);
             var info = info.u;
-            _markJun_.getFromBae('getPriceInfo', {url:info});
+            _markJun_.getFromBae('getPriceInfo', {
+                url: info
+            });
             _markJun_.totalCount++
         }
     },

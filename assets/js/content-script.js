@@ -5,43 +5,42 @@
     var addButtonStr = '<div id="_tgA_" ' + divStyle + '><div ' + divChildStyle + '>收藏</div></div>';
     chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
         switch (request.ope) {
-        case 'added':
-            $('#_tgA_').remove();
-            $('body').append(delButtonStr);
-            break;
-        case 'deleted':
-        case 'new':
-            $('#_tgD_').remove();
-            $('body').append(addButtonStr);
-            break;
-        default:
-            console.log('unkonw message');
-            break
+            case 'added':
+                $('#_tgA_').remove();
+                $('body').append(delButtonStr);
+                break;
+            case 'deleted':
+            case 'new':
+                $('#_tgD_').remove();
+                $('body').append(addButtonStr);
+                break;
+            default:
+                console.log('unkonw message');
+                break
         }
     });
     chrome.extension.sendMessage({
-        ope:
-        'checkExist',
+        ope: 'checkExist',
         u: location.href
     });
-    $('#_tgD_').live('click', 
-    function() {
-        $('#_tgD_').remove();
-        $('body').append(addButtonStr);
-        chrome.extension.sendMessage({
-            ope: 'delUrl',
-            u: location.href
+    $('#_tgD_').live('click',
+        function() {
+            $('#_tgD_').remove();
+            $('body').append(addButtonStr);
+            chrome.extension.sendMessage({
+                ope: 'delUrl',
+                u: location.href
+            });
+            return false
         });
-        return false
-    });
-    $('#_tgA_').live('click', 
-    function() {
-        $('#_tgA_').remove();
-        $('body').append(delButtonStr);
-        chrome.extension.sendMessage({
-            ope: 'addUrl',
-            u: location.href
-        });
-        return false
-    })
+    $('#_tgA_').live('click',
+        function() {
+            $('#_tgA_').remove();
+            $('body').append(delButtonStr);
+            chrome.extension.sendMessage({
+                ope: 'addUrl',
+                u: location.href
+            });
+            return false
+        })
 })(jQuery);

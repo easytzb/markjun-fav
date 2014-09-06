@@ -5,11 +5,12 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
     for (key in changes) {
         var storageChange = changes[key];
         if (typeof storageChange.oldValue == 'undefined' && !_markJun_.checkExist(storageChange.newValue)) {
-			_markJun_.getFromBae('getPriceInfo', {url:storageChange.newValue});
-		}
-        else if (typeof storageChange.newValue == 'undefined') {
-			_markJun_.delUrl(storageChange.oldValue)
-		}
+            _markJun_.getFromBae('getPriceInfo', {
+                url: storageChange.newValue
+            });
+        } else if (typeof storageChange.newValue == 'undefined') {
+            _markJun_.delUrl(storageChange.oldValue)
+        }
     }
 });
 
@@ -18,33 +19,55 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
     if (!url) return;
     _markJun_.tabid = sender.tab.id;
     switch (request.ope) {
-    case 'addUrl':
-        chrome.storage.sync.set(JSON.parse('{"' + _markJun_.getKey(url) + '": "' + url + '"}'));
-        _markJun_.getFromBae('getPriceInfo', {url:url});
-        _markJun_.stat(1);
-        break;
-    case 'checkExist':
-        var res = _markJun_.checkExist(url);
-        if (res === false) return false;
-        if (res) chrome.tabs.sendMessage(_markJun_.tabid, {
-            ope: "added"
-        });
-        else chrome.tabs.sendMessage(_markJun_.tabid, {
-            ope: "new"
-        });
-        break;
-    case 'delUrl':        
-        _markJun_.delUrl(url);
-        _markJun_.stat(2);
-        break;
-    default:
-        res = 'Unexpected Action.';
-        break
+        case 'addUrl':
+            chrome.storage.sync.set(JSON.parse('{"' + _markJun_.getKey(url) + '": "' + url + '"}'));
+            _markJun_.getFromBae('getPriceInfo', {
+                url: url
+            });
+            _markJun_.stat(1);
+            break;
+        case 'checkExist':
+            var res = _markJun_.checkExist(url);
+            if (res === false) return false;
+            if (res) chrome.tabs.sendMessage(_markJun_.tabid, {
+                ope: "added"
+            });
+            else chrome.tabs.sendMessage(_markJun_.tabid, {
+                ope: "new"
+            });
+            break;
+        case 'delUrl':
+            _markJun_.delUrl(url);
+            _markJun_.stat(2);
+            break;
+        default:
+            res = 'Unexpected Action.';
+            break
     }
 });
 
-var contextMenusId = chrome.contextMenus.create({"documentUrlPatterns":["http://www.360buy.com/product/*.html*", "http://*.360buy.com/*.html*", "http://www.jd.com/product/*.html*", "http://*.jd.com/*.html*", "http://item.taobao.com/item.htm*id=*", "http://wt.taobao.com/detail.html*id=*", "http://detail.tmall.com/venus/spu_detail.htm*spu_id=*mallstItemId=*", "http://detail.tmall.com/item.htm*id*", "http://item.vancl.com/*.html*", "http://item.vt.vancl.com/*.html*", "http://www.amazon.cn/*dp*", "http://www.amazon.cn/gp/product/*"],"title": "mark君·网购收藏夹", "contexts":["page"]});
+var contextMenusId = chrome.contextMenus.create({
+    "documentUrlPatterns": ["http://www.360buy.com/product/*.html*", "http://*.360buy.com/*.html*", "http://www.jd.com/product/*.html*", "http://*.jd.com/*.html*", "http://item.taobao.com/item.htm*id=*", "http://wt.taobao.com/detail.html*id=*", "http://detail.tmall.com/venus/spu_detail.htm*spu_id=*mallstItemId=*", "http://detail.tmall.com/item.htm*id*", "http://item.vancl.com/*.html*", "http://item.vt.vancl.com/*.html*", "http://www.amazon.cn/*dp*", "http://www.amazon.cn/gp/product/*"],
+    "title": "mark君·网购收藏夹",
+    "contexts": ["page"],
+    'onclick': function(info, tab) {
+        url = tab.url;
+        console.log(url);
+        res = _markJun_.checkExist(url);
+        console.log(tab.id)
+        if (res === false) return false;
+        if (res) {
+            chrome.tabs.sendMessage(tab.id, {
+                ope: "new"
+            });
+        } else {
+            chrome.tabs.sendMessage(tab.id, {
+                ope: "added"
+            });
+        }
+
+    }
+});
 
 window.setInterval(_markJun_.updateInfo, 600000);
 window.setTimeout(_markJun_.updateInfo, 5000);
-
