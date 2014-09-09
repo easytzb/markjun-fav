@@ -12,13 +12,13 @@ var _markJun_ = {
     backend: 'http://127.0.0.1:89/',
     //backend: 'http://markjun.duapp.com/',
     productStat: {
-        soldOut: [0x4, ],
-        restock: [0x2, ],
-        priceUp: [0x40, ],
-        priceDown: [0x20, ],
-        vpriceUp: [0x10, ],
-        vpriceDown: [0x8, ],
-        isOff: [0x1, ],
+        soldOut: 0x4,
+        restock: 0x2,
+        priceUp: 0x40,
+        priceDown: 0x20,
+        vpriceUp: 0x10,
+        vpriceDown: 0x8,
+        isOff: 0x1,
     },
     productChar: {
         soldOut: '○',
@@ -108,17 +108,17 @@ var _markJun_ = {
             code |= (info.o == 1 ? this.productStat.soldOut : this.productStat.restock);
 
         if (info.ptime) {
-            var oldPrice = parseFloat(info.op).toFixed(2);
-            var newPrice = parseFloat(info.p).toFixed(2);
+            var oldPrice = parseFloat(info.op);
+            var newPrice = parseFloat(info.p);
             if (oldPrice > newPrice) code |= this.productStat.priceDown;
-            if (oldPrice < newPrice) code |= this.productStat.priceUp;
+            else if (oldPrice < newPrice) code |= this.productStat.priceUp;
         }
 
         if (info.vtime) {
-            var oldPrice = parseFloat(info.ov).toFixed(2);
-            var newPrice = parseFloat(info.v).toFixed(2);
+            var oldPrice = parseFloat(info.ov);
+            var newPrice = parseFloat(info.v);
             if (oldPrice > newPrice) code |= this.productStat.vpriceDown;
-            if (oldPrice < newPrice) code |= this.productStat.vpriceUp;
+            else if (oldPrice < newPrice) code |= this.productStat.vpriceUp;
         }
 
         if (info.o) code |= this.productStat.isOn;

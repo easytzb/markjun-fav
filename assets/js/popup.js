@@ -5,7 +5,7 @@
         var htmlString = "",
             urlArr = [],
             i = 0;
-        for (var key in localStorage) {
+        for (var key in localS:rage) {
             if (key.indexOf('data_') !== 0) continue;
             var tmp = JSON.parse(localStorage[key]);
             var reg = /.+?\.(.+?)\./.exec(tmp.u);
@@ -32,11 +32,18 @@
 
             var priceButton = '<div class="buttoncontainer">';
             if (isSoldout) {
-                priceButton += '<a class="kd-button ' + (isChanged ? "isChanged" : "") + '" href="' + url + '"><span style="' + color + '">' + _OFFLINE_ + '</span></a>';
+                priceButton += '<a class="kd-button" href="' + url + '"><span style="' + color + '">' + _OFFLINE_ + '</span></a>';                
             } else {
-                priceButton += '<a class="kd-button ' + (isChanged ? "isChanged" : '') + '" href="' + url + '"><span style="' + color + '">' + ('&#65509; ' + urlArr[key].p + (urlArr[key].v ? (' <span>|</span> ' + urlArr[key].v + ' (VIP)') : '')) + '</span></a>';
+                priceButton += '<a class="kd-button" href="' + url + '"><span style="' + color + '">' + ('&#65509; ' + urlArr[key].p + (urlArr[key].v ? (' <span>|</span> ' + urlArr[key].v + ' (VIP)') : '')) + '</span></a>';
             }
             priceButton += '</div>';
+
+            var oldInfoButton = '';
+            if (isChanged) {
+                oldInfoButton += '<div class="buttoncontainer isChanged">';
+                oldInfoButton += '<a class="kd-button" href="' + url + '"><span style="' + color + '">' + _OFFLINE_ + '</span></a>';
+                oldInfoButton += '</div>';
+            }
 
             var delButton = '<div class="del" data="' + url + '"><img src="assets/images/delete.jpg" /></div>';
 
