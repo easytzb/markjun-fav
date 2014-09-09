@@ -5,7 +5,7 @@
         var htmlString = "",
             urlArr = [],
             i = 0;
-        for (var key in localS:rage) {
+        for (var key in localStorage) {
             if (key.indexOf('data_') !== 0) continue;
             var tmp = JSON.parse(localStorage[key]);
             var reg = /.+?\.(.+?)\./.exec(tmp.u);
