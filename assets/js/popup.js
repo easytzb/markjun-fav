@@ -40,16 +40,14 @@
 
             var oldInfoButton = '';
             if (isChanged) {
-                oldInfoButton += '<div class="buttoncontainer isChanged">';
-                oldInfoButton += '<a class="kd-button" href="' + url + '"><span style="' + color + '">' + _OFFLINE_ + '</span></a>';
-                oldInfoButton += '</div>';
+                oldInfoButton += '<a class="kd-button isChanged" href="' + url + '"></a>';
             }
 
             var delButton = '<div class="del" data="' + url + '"><img src="assets/images/delete.jpg" /></div>';
 
             var goButton = '<a class="kd-button kd-button-submit" href="' + url + '">GO</a>';
 
-            var product = '<li class="product">' + divImg + divName + divFrom + priceButton + goButton + delButton + '</li>';
+            var product = '<li class="product">' + divImg + divName + divFrom + priceButton + oldInfoButton + goButton + delButton + '</li>';
 
             if (++i < 7 && window.is2nd) continue;
 
@@ -74,9 +72,10 @@
         chrome.extension.getBackgroundPage()._markJun_.stat(4);
 
         $('.isChanged').click(function() {
-            var _markJun_ = chrome.extension.getBackgroundPage()._markJun_;
-            _markJun_.clearChangedInfoByUrl(this.href);
-            $(this).removeClass('isChanged');
+            //var _markJun_ = chrome.extension.getBackgroundPage()._markJun_;
+            //_markJun_.clearChangedInfoByUrl(this.href);
+            //$(this).removeClass('isChanged');
+            return false;            
         }).mouseover(function() {
             var _markJun_ = chrome.extension.getBackgroundPage()._markJun_;
             var info = _markJun_.getProductInfo(this.href);
@@ -92,11 +91,10 @@
                 oldStat += '&#65509; ' + info.op + ' <span>|</span> ' + info.ov + ' (VIP)';
             }
             oldStat += '</span>';
-            window.aTmp = $(this).html();
-            console.log(window.aTmp)
-            $(this).html(oldStat);
+            window.aTmp = $(this).parent().find('.buttoncontainer a').html();            
+            $(this).parent().find('.buttoncontainer a').html(oldStat);
         }).mouseout(function() {
-            $(this).html(window.aTmp);
+            $(this).parent().find('.buttoncontainer a').html(window.aTmp);
             window.aTmp = null;
         });
 
