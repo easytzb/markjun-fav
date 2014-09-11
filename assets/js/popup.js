@@ -72,10 +72,10 @@
         chrome.extension.getBackgroundPage()._markJun_.stat(4);
 
         $('.isChanged').click(function() {
-            //var _markJun_ = chrome.extension.getBackgroundPage()._markJun_;
-            //_markJun_.clearChangedInfoByUrl(this.href);
-            //$(this).removeClass('isChanged');
-            return false;            
+            var _markJun_ = chrome.extension.getBackgroundPage()._markJun_;
+            _markJun_.clearChangedInfoByUrl(this.href);
+            $(this).remove();
+            return false;
         }).mouseover(function() {
             var _markJun_ = chrome.extension.getBackgroundPage()._markJun_;
             var info = _markJun_.getProductInfo(this.href);
@@ -91,11 +91,25 @@
                 oldStat += '&#65509; ' + info.op + ' <span>|</span> ' + info.ov + ' (VIP)';
             }
             oldStat += '</span>';
-            window.aTmp = $(this).parent().find('.buttoncontainer a').html();            
-            $(this).parent().find('.buttoncontainer a').html(oldStat);
+            var a = $(this).parent().find('.buttoncontainer a');
+
+            if (!a.attr('data')) a.attr('data', a.html())
+
+            if (a.attr('sto')) clearTimeout(a.attr('sto'));
+
+            a.find('span').animate({
+                top:'15px'
+            },300, function(){
+                a.html(oldStat);
+                a.find('span').animate({
+                    top: '0px'
+                }, 100)
+            });
         }).mouseout(function() {
-            $(this).parent().find('.buttoncontainer a').html(window.aTmp);
-            window.aTmp = null;
+            var a = $(this).parent().find('.buttoncontainer a');
+            a.attr('sto', setTimeout(function(){
+                a.html(a.attr('data'));
+            }, 300));
         });
 
         $('.imgcontainer').live('click',
