@@ -165,6 +165,10 @@ var _markJun_ = {
 
         if (changeCode & this.productStat.isOff)
             color = this.productColor.isOff;
+        else if (changeCode & this.productStat.vpriceUp)
+            color = this.productColor.vpriceUp;
+        else if (changeCode & this.productStat.vpriceDown)
+            color = this.productColor.vpriceDown;
         else if (changeCode & this.productStat.priceUp)
             color = this.productColor.priceUp;
         else if (changeCode & this.productStat.priceDown)
