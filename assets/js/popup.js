@@ -74,7 +74,7 @@
         $('.isChanged').click(function() {
             var _markJun_ = chrome.extension.getBackgroundPage()._markJun_;
             _markJun_.clearChangedInfoByUrl(this.href);
-            $(this).remove();
+            $(this).mouseout().remove();
             return false;
         }).mouseover(function() {
             var _markJun_ = chrome.extension.getBackgroundPage()._markJun_;
