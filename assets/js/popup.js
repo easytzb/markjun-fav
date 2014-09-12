@@ -40,7 +40,7 @@
 
             var oldInfoButton = '';
             if (isChanged) {
-                oldInfoButton += '<a class="kd-button isChanged" href="' + url + '"></a>';
+                oldInfoButton += '<a class="kd-button isChanged" title="点击刷新" href="' + url + '"></a>';
             }
 
             var delButton = '<div class="del" data="' + url + '"><img src="assets/images/delete.jpg" /></div>';
@@ -97,6 +97,8 @@
 
             if (a.attr('sto')) clearTimeout(a.attr('sto'));
 
+            a.addClass('refresh');
+
             a.find('span').animate({
                 top:'15px'
             },300, function(){
@@ -108,7 +110,7 @@
         }).mouseout(function() {
             var a = $(this).parent().find('.buttoncontainer a');
             a.attr('sto', setTimeout(function(){
-                a.html(a.attr('data'));
+                a.html(a.attr('data')).removeClass('refresh');
             }, 300));
         });
 
