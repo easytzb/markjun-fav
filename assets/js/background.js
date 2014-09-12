@@ -19,7 +19,7 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
     switch (request.ope) {
         case 'addUrl':
             _markJun_.addUrl(url);
-            _markJun_.stat(1);
+            _markJun_.stat(101);
             break;
         case 'checkExist':
             var res = _markJun_.checkExist(url);
@@ -33,7 +33,7 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
             break;
         case 'delUrl':
             _markJun_.delUrl(url);
-            _markJun_.stat(2);
+            _markJun_.stat(102);
             break;
         default:
             res = 'Unexpected Action.';

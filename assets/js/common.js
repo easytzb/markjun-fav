@@ -284,7 +284,7 @@ var _markJun_ = {
         }
 
         if (!items.length) return false;
-        _markJun_.stat(11);
+        _markJun_.stat(107);
 
         var opt = {
             type: "list",
@@ -314,15 +314,15 @@ var _markJun_ = {
         chrome.notifications.onButtonClicked.addListener(function(nid, index) {
             if (nid != notifyId) return;
             if (0 == index) {
-                _markJun_.stat(6);
+                _markJun_.stat(108);
                 _markJun_.openProduct();
-            } else _markJun_.stat(7);
+            } else _markJun_.stat(109);
             _markJun_.clearChangedInfo();
         });
 
         chrome.notifications.onClosed.addListener(function(nid, byUser) {
             if (nid != notifyId) return;
-            if (byUser) _markJun_.stat(12);
+            if (byUser) _markJun_.stat(110);
         })
     },
     updateInfo: function() {
