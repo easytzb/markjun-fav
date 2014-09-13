@@ -11,8 +11,8 @@ var _markJun_ = {
         'vjia': '凡客',
         'amazon': '亚马逊'
     },
-    backend: 'http://127.0.0.1:89/',
-    //backend: 'http://markjun.duapp.com/',
+    //backend: 'http://127.0.0.1:89/',
+    backend: 'http://markjun.duapp.com/',
     productStat: {
         soldOut: 0x4,
         restock: 0x2,
@@ -41,14 +41,13 @@ var _markJun_ = {
         isOff: 'color:#999;',
     },
     contextMenusId: 0,
-    numOfNotify: 0,
     getKey: function(url) {
         return "data_" + Crypto.MD5(url);
     },
     tabid: 0,
     updateCount: 0,
     totalCount: 0,
-    notifyWindows: [],
+    notifyId: null,
     checkValid: function(url) {
         for (var k in this.validUrls) {
             var reg = this.validUrls[k];
@@ -137,6 +136,11 @@ var _markJun_ = {
         })
     },
     clearChangedInfo: function() {
+
+        if (this.notifyId) chrome.notifications.clear(this.notifyId, function(wasCleared) {
+            console.log(wasCleared)
+        });
+        this.notifyId = null;
         for (var key in localStorage) {
             if (key.indexOf('data_') !== 0) continue;
             var info = JSON.parse(localStorage[key]);
@@ -305,27 +309,10 @@ var _markJun_ = {
             }]
         };
 
-        var notifyId = null;
-        chrome.notifications.create("", opt, function(nid) {
-            if (chrome.extension.lastError) {
-                console.log("create error: " + chrome.extension.lastError.message);
-            }
-            notifyId = nid;
+        chrome.notifications.create(_markJun_.notifyId ? _markJun_.notifyId : "", opt, function(notifyId) {
+            _markJun_.notifyId = notifyId;
         });
 
-        chrome.notifications.onButtonClicked.addListener(function(nid, index) {
-            if (nid != notifyId) return;
-            if (0 == index) {
-                _markJun_.stat(110);
-                _markJun_.openProduct();
-            } else _markJun_.stat(111);
-            _markJun_.clearChangedInfo();
-        });
-
-        chrome.notifications.onClosed.addListener(function(nid, byUser) {
-            if (nid != notifyId) return;
-            if (byUser) _markJun_.stat(112);
-        })
     },
     updateInfo: function() {
         for (var key in localStorage) {
@@ -340,6 +327,69 @@ var _markJun_ = {
     },
     echo: function(str) {
         console.log(str)
+    },
+    addListener: function() {
+        chrome.storage.onChanged.addListener(function(changes, namespace) {
+            if (namespace == 'local') return true;
+            for (key in changes) {
+                var storageChange = changes[key];
+                if (typeof storageChange.oldValue == 'undefined' && !_markJun_.checkExist(storageChange.newValue)) {
+                    _markJun_.getFromBae('getPriceInfo', {
+                        url: storageChange.newValue
+                    });
+                } else if (typeof storageChange.newValue == 'undefined') {
+                    _markJun_.delUrl(storageChange.oldValue)
+                }
+            }
+        });
+
+        chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
+            var url = _markJun_.checkValid(request.u);
+            if (!url) return;
+            _markJun_.tabid = sender.tab.id;
+            switch (request.ope) {
+                case 'addUrl':
+                    _markJun_.addUrl(url);
+                    _markJun_.stat(101);
+                    break;
+                case 'checkExist':
+                    var res = _markJun_.checkExist(url);
+                    if (res === false) return false;
+                    if (res) chrome.tabs.sendMessage(_markJun_.tabid, {
+                        ope: "added"
+                    });
+                    else chrome.tabs.sendMessage(_markJun_.tabid, {
+                        ope: "new"
+                    });
+                    break;
+                case 'delUrl':
+                    _markJun_.delUrl(url);
+                    _markJun_.stat(103);
+                    break;
+                default:
+                    res = 'Unexpected Action.';
+                    break;
+            }
+        });
+
+        chrome.notifications.onButtonClicked.addListener(function(nid, index) {
+            if (nid != _markJun_.notifyId) return;
+            if (0 == index) {
+                _markJun_.stat(110);
+                _markJun_.openProduct();
+            } else _markJun_.stat(111);
+            _markJun_.clearChangedInfo();
+        });
+
+        chrome.notifications.onClosed.addListener(function(nid, byUser) {
+            if (nid != _markJun_.notifyId) return;
+            _markJun_.notifyId = null;
+            if (byUser) _markJun_.stat(112);
+        })
+
+        chrome.runtime.onInstalled.addListener(function() {
+            _markJun_.stat(100);
+        });
     },
     createContextMenus: function() {
         _markJun_.contextMenusId = chrome.contextMenus.create({
