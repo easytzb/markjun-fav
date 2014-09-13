@@ -1,5 +1,6 @@
 var _markJun_ = {
-    validUrls: [/^(http\:\/\/www\.360buy\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.360buy\.com\/\d+\.html).*$/i, /^(http\:\/\/www\.jd\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.jd\.com\/\d+\.html).*$/i, /^(http\:\/\/item\.taobao\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/wt\.taobao\.com\/detail\.html?\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/venus\/spu_detail\.htm\?(.*?)spu_id\=\d+(.*?)\&mallstItemId\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http:\/\/item\.vancl\.com\/\d+\.html).*/i, /^(http:\/\/item\.vt\.vancl\.com\/\d+\.html).*/i, /^(http:\/\/www\.amazon\.cn\/(.*?)dp\/[A-Z0-9]+?)($|\/.*$)/i, /^(http:\/\/www\.amazon\.cn\/gp\/product\/[A-Z0-9]+?)($|\/.*$)/i],
+    validUrls: [/^(http\:\/\/www\.360buy\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.360buy\.com\/\d+\.html).*$/i, /^(http\:\/\/www\.jd\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.jd\.com\/\d+\.html).*$/i, /^(http\:\/\/item\.taobao\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/wt\.taobao\.com\/detail\.html?\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/venus\/spu_detail\.htm\?(.*?)spu_id\=\d+(.*?)\&mallstItemId\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http:\/\/item\.vancl\.com\/\d+\.html).*/i, /^(http:\/\/item\.vjia\.com\/\d+\.html).*/i, /^(http:\/\/item\.vt\.vancl\.com\/\d+\.html).*/i, /^(http:\/\/www\.amazon\.cn\/(.*?)dp\/[A-Z0-9]+?)($|\/.*$)/i, /^(http:\/\/www\.amazon\.cn\/gp\/product\/[A-Z0-9]+?)($|\/.*$)/i],
+    documentUrlPatterns: ["http://item.vjia.com/*.html*", "http://www.360buy.com/product/*.html*", "http://*.360buy.com/*.html*", "http://www.jd.com/product/*.html*", "http://*.jd.com/*.html*", "http://item.taobao.com/item.htm*id=*", "http://wt.taobao.com/detail.html*id=*", "http://detail.tmall.com/venus/spu_detail.htm*spu_id=*mallstItemId=*", "http://detail.tmall.com/item.htm*id*", "http://item.vancl.com/*.html*", "http://item.vt.vancl.com/*.html*", "http://www.amazon.cn/*dp*", "http://www.amazon.cn/gp/product/*"],
     _from_: {
         '360buy': '京东',
         'jd': '京东',
@@ -7,6 +8,7 @@ var _markJun_ = {
         'tmall': '天猫',
         'vancl': '凡客',
         'vt': '凡客',
+        'vjia': '凡客',
         'amazon': '亚马逊'
     },
     backend: 'http://127.0.0.1:89/',
@@ -284,7 +286,7 @@ var _markJun_ = {
         }
 
         if (!items.length) return false;
-        _markJun_.stat(107);
+        _markJun_.stat(109);
 
         var opt = {
             type: "list",
@@ -314,15 +316,15 @@ var _markJun_ = {
         chrome.notifications.onButtonClicked.addListener(function(nid, index) {
             if (nid != notifyId) return;
             if (0 == index) {
-                _markJun_.stat(108);
+                _markJun_.stat(110);
                 _markJun_.openProduct();
-            } else _markJun_.stat(109);
+            } else _markJun_.stat(111);
             _markJun_.clearChangedInfo();
         });
 
         chrome.notifications.onClosed.addListener(function(nid, byUser) {
             if (nid != notifyId) return;
-            if (byUser) _markJun_.stat(110);
+            if (byUser) _markJun_.stat(112);
         })
     },
     updateInfo: function() {
@@ -341,7 +343,7 @@ var _markJun_ = {
     },
     createContextMenus: function() {
         _markJun_.contextMenusId = chrome.contextMenus.create({
-            "documentUrlPatterns": ["http://www.360buy.com/product/*.html*", "http://*.360buy.com/*.html*", "http://www.jd.com/product/*.html*", "http://*.jd.com/*.html*", "http://item.taobao.com/item.htm*id=*", "http://wt.taobao.com/detail.html*id=*", "http://detail.tmall.com/venus/spu_detail.htm*spu_id=*mallstItemId=*", "http://detail.tmall.com/item.htm*id*", "http://item.vancl.com/*.html*", "http://item.vt.vancl.com/*.html*", "http://www.amazon.cn/*dp*", "http://www.amazon.cn/gp/product/*"],
+            "documentUrlPatterns": _markJun_.documentUrlPatterns,
             "title": "mark君·网购收藏夹",
             "contexts": ["page"],
             'onclick': function(info, tab) {
@@ -353,11 +355,13 @@ var _markJun_ = {
                         ope: "new"
                     });
                     _markJun_.delUrl(url);
+                    _markJun_.stat(105);
                 } else {
                     chrome.tabs.sendMessage(tab.id, {
                         ope: "added"
                     });
                     _markJun_.addUrl(url);
+                    _markJun_.stat(102);
                 }
 
             }

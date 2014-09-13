@@ -69,11 +69,11 @@
 
         $('#products').append(getHtml());
         window.to = window.setTimeout(getHtml, 1000);
-        chrome.extension.getBackgroundPage()._markJun_.stat(104);
+        chrome.extension.getBackgroundPage()._markJun_.stat(106);
 
         $('.isChanged').click(function() {
             var _markJun_ = chrome.extension.getBackgroundPage()._markJun_;
-            _markJun_.stat(111);
+            _markJun_.stat(113);
             _markJun_.clearChangedInfoByUrl(this.href);
             $(this).mouseout().remove();
             return false;
@@ -117,7 +117,7 @@
 
         $('.imgcontainer').live('click',
             function() {
-                chrome.extension.getBackgroundPage()._markJun_.stat(105);
+                chrome.extension.getBackgroundPage()._markJun_.stat(107);
                 chrome.tabs.create({
                     'url': $(this).parent().find('a').attr('href'),
                     active: false
@@ -125,7 +125,7 @@
             });
         $('.kd-button-submit').live('click',
             function() {
-                chrome.extension.getBackgroundPage()._markJun_.stat(106);
+                chrome.extension.getBackgroundPage()._markJun_.stat(108);
                 chrome.tabs.create({
                     'url': $(this).attr('href'),
                     active: false
@@ -133,7 +133,7 @@
             });
         $('.del').live('click',
             function() {
-                chrome.extension.getBackgroundPage()._markJun_.stat(103);
+                chrome.extension.getBackgroundPage()._markJun_.stat(104);
                 chrome.extension.getBackgroundPage()._markJun_.delUrl($(this).attr('data'));
                 $(this).parents('.product').remove();
                 return false

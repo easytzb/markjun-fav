@@ -33,7 +33,7 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
             break;
         case 'delUrl':
             _markJun_.delUrl(url);
-            _markJun_.stat(102);
+            _markJun_.stat(103);
             break;
         default:
             res = 'Unexpected Action.';
@@ -42,6 +42,8 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 _markJun_.createContextMenus();
-
+chrome.runtime.onInstalled.addListener(function() {
+    _markJun_.stat(100);
+});
 window.setInterval(_markJun_.updateInfo, 600000);
 window.setTimeout(_markJun_.updateInfo, 5000);
