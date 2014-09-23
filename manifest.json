@@ -12,7 +12,7 @@
    },
    "content_scripts": [ {
       "js": [ "assets/js/jquery-1.8.2.min.js", "assets/js/content-script.js" ],
-      "matches": [ "http://detail.tmall.com/*", "http://item.taobao.com/*", "http://wt.taobao.com/*", "http://www.360buy.com/product/*", "http://item.vancl.com/*", "http://item.vt.vancl.com/*", "http://item.vjia.com/*.html*", "http://*.360buy.com/*.html*", "http://*.jd.com/*", "http://www.amazon.cn/*dp/*", "http://www.amazon.cn/gp/product/*", "http://www.suning.com/emall/*", "http://www.suning.com/emall/*","http://product.suning.com/*.html"]
+      "matches": [ "http://detail.tmall.com/*", "http://item.taobao.com/*", "http://wt.taobao.com/*", "http://www.360buy.com/product/*", "http://item.vancl.com/*", "http://item.vt.vancl.com/*", "http://item.vjia.com/*.html*", "http://*.360buy.com/*.html*", "http://*.jd.com/*", "http://www.amazon.cn/*dp/*", "http://www.amazon.cn/gp/product/*", "http://www.suning.com/emall/cprd_*","http://www.suning.com/emall/sprd_*","http://product.suning.com/0*.html*"]
    } ],
    "description": "强大的网购收藏夹，如果你认为他只是一款跨淘宝、天猫、京东、凡客、亚马逊的收藏夹，那就大错特错了，他更可以变价、上架、下架提醒哟，亲~",
    "icons": {
@@ -22,6 +22,6 @@
    },
    "manifest_version": 2,
    "name": "Mark君·网购收藏夹",
-   "permissions": [ "storage", "notifications", "tabs", "http://markjun.duapp.com/*", "contextMenus"],
+   "permissions": [ "storage", "notifications", "tabs", "http://markjun.duapp.com/*", "http://127.0.0.1:89/*", "contextMenus"],
    "version": "1.1"
 }
