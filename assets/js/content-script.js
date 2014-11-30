@@ -23,24 +23,22 @@
         ope: 'checkExist',
         u: location.href
     });
-    $('#_tgD_').live('click',
-        function() {
-            $('#_tgD_').remove();
-            $('body').append(addButtonStr);
-            chrome.extension.sendMessage({
-                ope: 'delUrl',
-                u: location.href
-            });
-            return false
+    $('#_tgD_').live('click', function() {
+        $('#_tgD_').remove();
+        $('body').append(addButtonStr);
+        chrome.extension.sendMessage({
+            ope: 'delUrl',
+            u: location.href
         });
-    $('#_tgA_').live('click',
-        function() {
-            $('#_tgA_').remove();
-            $('body').append(delButtonStr);
-            chrome.extension.sendMessage({
-                ope: 'addUrl',
-                u: location.href
-            });
-            return false
-        })
+        return false
+    });
+    $('#_tgA_').live('click', function() {
+        $('#_tgA_').remove();
+        $('body').append(delButtonStr);
+        chrome.extension.sendMessage({
+            ope: 'addUrl',
+            u: location.href
+        });
+        return false
+    })
 })(jQuery);

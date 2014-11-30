@@ -19,7 +19,7 @@
         window.is2nd = window.is2nd || 0;
         i = 0;
         for (var key in urlArr) {
-            var url = urlArr[key].u;
+            var url = urlArr[key].r?urlArr[key].r:urlArr[key].u;
             var _markJun_ = chrome.extension.getBackgroundPage()._markJun_;
             var changeCode = _markJun_.getChangeCode(urlArr[key]);
             var color = _markJun_.getChangeColor(changeCode);
