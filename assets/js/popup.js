@@ -40,7 +40,7 @@
 
             var oldInfoButton = '';
             if (isChanged) {
-                oldInfoButton += '<a class="kd-button isChanged" title="点击刷新" href="' + url + '"></a>';
+                oldInfoButton += '<a class="kd-button isChanged" title="点击刷新" href="' + urlArr[key].u + '"></a>';
             }
 
             var delButton = '<div class="del" data="' + url + '"><img src="assets/images/delete.jpg" /></div>';

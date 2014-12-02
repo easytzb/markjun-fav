@@ -1,6 +1,6 @@
 var _markJun_ = {
-    //backend: 'http://127.0.0.1:89/',
-    backend: 'http://markjun.duapp.com/',
+    backend: 'http://127.0.0.1:89/',
+    //backend: 'http://markjun.duapp.com/',
     validUrls: [/^(http\:\/\/www\.360buy\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.360buy\.com\/\d+\.html).*$/i, /^(http\:\/\/www\.jd\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.jd\.com\/\d+\.html).*$/i, /^(http\:\/\/item\.taobao\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/wt\.taobao\.com\/detail\.html?\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/venus\/spu_detail\.htm\?(.*?)spu_id\=\d+(.*?)\&mallstItemId\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http:\/\/item\.vancl\.com\/\d+\.html).*/i, /^(http:\/\/item\.vjia\.com\/\d+\.html).*/i, /^(http:\/\/item\.vt\.vancl\.com\/\d+\.html).*/i, /^(http:\/\/www\.amazon\.cn\/(.*?)dp\/[A-Z0-9]+?)($|\/.*$)/i, /^(http:\/\/www\.amazon\.cn\/gp\/product\/[A-Z0-9]+?)($|\/.*$)/i, /^(http:\/\/product\.suning\.com\/[0-9\/]+\.html).*/i, /^(http:\/\/www\.suning\.com\/emall\/[sc]prd\_.+)/i],
     _from_: {
         '360buy': '京东',
@@ -212,7 +212,6 @@ var _markJun_ = {
     },
 
     getPriceInfoSuccess: function(data) {
-        console.log(data);
         _markJun_.updateCount++;
         if (!data) return;
         if (!(data = JSON.parse(data))) return;
