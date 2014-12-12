@@ -299,7 +299,7 @@ var _markJun_ = {
             iconUrl: "assets/images/logo-128-bgwhite.png",
             items: items,
             //eventTime:Date.now() + 1000,
-            isClickable: true,
+            //isClickable: true,
             buttons: [{
                 title: '打开(所有)变动商品',
                 iconUrl: 'assets/images/checkmark.png'
