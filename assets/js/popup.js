@@ -8,9 +8,7 @@
         for (var key in localStorage) {
             if (key.indexOf('data_') !== 0) continue;
             var tmp = JSON.parse(localStorage[key]);
-            var reg = /.+?\.(.+?)\./.exec(tmp.u);
-            if (reg[1] == 'jd') reg[1] = '360buy';
-            tmp.from = chrome.extension.getBackgroundPage()._markJun_._from_[reg[1]];
+            tmp.from = chrome.extension.getBackgroundPage()._markJun_.from(tmp.u);
             urlArr[i++] = tmp
         };
         urlArr.sort(function(a, b) {
@@ -43,7 +41,7 @@
                 oldInfoButton += '<a class="kd-button isChanged" title="点击刷新" href="' + urlArr[key].u + '"></a>';
             }
 
-            var delButton = '<div class="del" data="' + url + '"><img src="assets/images/delete.jpg" /></div>';
+            var delButton = '<div class="del" data="' + urlArr[key].u + '"><img src="assets/images/delete.jpg" /></div>';
 
             var goButton = '<a class="kd-button kd-button-submit" href="' + url + '">GO</a>';
 

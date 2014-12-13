@@ -1,45 +1,6 @@
 var _markJun_ = {
     backend: 'http://127.0.0.1:89/',
     //backend: 'http://markjun.duapp.com/',
-    validUrls: [/^(http\:\/\/www\.360buy\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.360buy\.com\/\d+\.html).*$/i, /^(http\:\/\/www\.jd\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.jd\.com\/\d+\.html).*$/i, /^(http\:\/\/item\.taobao\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/wt\.taobao\.com\/detail\.html?\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/venus\/spu_detail\.htm\?(.*?)spu_id\=\d+(.*?)\&mallstItemId\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http:\/\/item\.vancl\.com\/\d+\.html).*/i, /^(http:\/\/item\.vjia\.com\/\d+\.html).*/i, /^(http:\/\/item\.vt\.vancl\.com\/\d+\.html).*/i, /^(http:\/\/www\.amazon\.cn\/(.*?)dp\/[A-Z0-9]+?)($|\/.*$)/i, /^(http:\/\/www\.amazon\.cn\/gp\/product\/[A-Z0-9]+?)($|\/.*$)/i, /^(http:\/\/product\.suning\.com\/[0-9\/]+\.html).*/i, /^(http:\/\/www\.suning\.com\/emall\/[sc]prd\_.+)/i],
-    _from_: {
-        '360buy': '京东',
-        'jd': '京东',
-        'taobao': '淘宝',
-        'tmall': '天猫',
-        'vancl': '凡客',
-        'vt': '凡客',
-        'vjia': '凡客',
-        'suning': '苏宁',
-        'amazon': '亚马逊'
-    },
-    productStat: {
-        soldOut: 0x4,
-        restock: 0x2,
-        priceUp: 0x40,
-        priceDown: 0x20,
-        vpriceUp: 0x10,
-        vpriceDown: 0x8,
-        isOff: 0x1,
-    },
-    productChar: {
-        soldOut: '○',
-        restock: '●',
-        priceUp: '↗',
-        priceDown: '↘',
-        vpriceUp: 'V↗',
-        vpriceDown: 'V↘',
-        isOff: '',
-    },
-    productColor: {
-        soldOut: 'color:#999;',
-        restock: 'color:green;',
-        priceUp: 'color:#ccc;',
-        priceDown: 'color:green;',
-        vpriceUp: 'color:#ccc;',
-        vpriceDown: 'color:green;',
-        isOff: 'color:#999;',
-    },
     contextMenusId: 0,
     getKey: function(url) {
         return "data_" + Crypto.MD5(url);
@@ -47,7 +8,7 @@ var _markJun_ = {
     tabid: 0,
     updateCount: 0,
     totalCount: 0,
-    notifyId: null,
+    notifyId: {},
     checkValid: function(url) {
         for (var k in this.validUrls) {
             var reg = this.validUrls[k];
@@ -185,7 +146,8 @@ var _markJun_ = {
 
         return color;
     },
-    getChangeStrPre: function(changeCode) {
+
+    getChangeTitle: function(changeCode) {
         changeCode = changeCode >> 1 << 1;
         if (!(changeCode)) return '';
 
@@ -272,8 +234,34 @@ var _markJun_ = {
         else str = parseInt(diff / 86400 / 365) + " 年前";
         return str + '变动'
     },
+    from: function(url) {
+        var reg = /.+?\.(.+?)\./.exec(url);
+        console.log(reg,url)
+        if (reg[1] == 'jd') reg[1] = '360buy';
+        return this._from_[reg[1]]
+    },
+    logo: function(url) {
+        var reg = /.+?\.(.+?)\./.exec(url);
+        console.log(reg, url)
+        if (reg[1] == 'jd') reg[1] = '360buy';
+        return this._logo_[reg[1]]
+    },
     showNotify: function() {
-        var items = new Array();
+        var opt = {
+            type: "basic",
+            title: "Product Title",
+            message: "Nothing",
+            iconUrl: "Site Logo",
+            buttons: [{
+                title: '查看商品详情',
+                iconUrl: 'assets/images/checkmark.png'
+            }, {
+                title: '知道了，不再提醒此次变动',
+                iconUrl: 'assets/images/cancel.png'
+            }]
+        };
+
+        var hasNotify = false;
         for (var key in localStorage) {
             if (key.indexOf('data_') !== 0) continue;
 
@@ -282,37 +270,43 @@ var _markJun_ = {
             var changeCode = this.getChangeCode(info);
             if (!(changeCode >> 1 << 1)) continue;
 
-            var title = this.getChangeStrPre(changeCode);
-            items.push({
-                title: (title + ':' + info.t),
-                message: ''
-            })
+            var desc = "";
+            if (changeCode & this.productStat.soldOut) {
+                desc = ""
+            }
+            if (changeCode & this.productStat.restock) {
+                desc = ""
+            }
+            if (changeCode & this.productStat.priceUp) {
+                desc = "价格：" + info.op + " 涨到 " + info.p;
+                desc += "，涨了 " + 
+                    Math.abs(parseFloat(info.op) - parseFloat(info.p))
+            }
+            if (changeCode & this.productStat.priceDown) {
+                desc = "价格：" + info.op + " 降到 " + info.p
+                desc += "，降了 " + 
+                    Math.abs(parseFloat(info.op) - parseFloat(info.p))
+            }
+            if (changeCode & this.productStat.vpriceUp) {
+                desc = "折后价：" + info.ov + " 涨到 " + info.v
+                desc += "，涨了 " + 
+                    Math.abs(parseFloat(info.ov) - parseFloat(info.v))
+            }
+            if (changeCode & this.productStat.vpriceDown) {
+                desc = "折后价：" + info.ov + " 降到 " + info.v
+                desc += "，降了 " + 
+                    Math.abs(parseFloat(info.ov) - parseFloat(info.v))
+            }
+
+            opt.message = desc;
+            opt.title = info.t//this.getChangeTitle(changeCode);
+            opt.iconUrl = "assets/images/" + this.logo(info.u) + ".png";
+            chrome.notifications.create(key, opt, function(notifyId) {
+                _markJun_.notifyId[notifyId] = 1;
+            });
+            hasNotify = true;
         }
-
-        if (!items.length) return false;
-        _markJun_.stat(109);
-
-        var opt = {
-            type: "list",
-            title: "变动的商品",
-            message: "zero",
-            iconUrl: "assets/images/logo-128-bgwhite.png",
-            items: items,
-            //eventTime:Date.now() + 1000,
-            //isClickable: true,
-            buttons: [{
-                title: '打开(所有)变动商品',
-                iconUrl: 'assets/images/checkmark.png'
-            }, {
-                title: '忽略(所有)变动商品',
-                iconUrl: 'assets/images/cancel.png'
-            }]
-        };
-
-        chrome.notifications.create(_markJun_.notifyId ? _markJun_.notifyId : "", opt, function(notifyId) {
-            _markJun_.notifyId = notifyId;
-        });
-
+        if (hasNotify) _markJun_.stat(109);
     },
     updateInfo: function() {
         for (var key in localStorage) {
@@ -391,7 +385,7 @@ var _markJun_ = {
             _markJun_.stat(100);
         });
     },
-    documentUrlPatterns: ["http://item.vjia.com/*.html*", "http://www.360buy.com/product/*.html*", "http://*.360buy.com/*.html*", "http://www.jd.com/product/*.html*", "http://*.jd.com/*.html*", "http://item.taobao.com/item.htm*id=*", "http://wt.taobao.com/detail.html*id=*", "http://detail.tmall.com/venus/spu_detail.htm*spu_id=*mallstItemId=*", "http://detail.tmall.com/item.htm*id*", "http://item.vancl.com/*.html*", "http://item.vt.vancl.com/*.html*", "http://www.amazon.cn/*dp*", "http://www.amazon.cn/gp/product/*", "http://www.suning.com/emall/sprd_*", "http://www.suning.com/emall/cprd_*", "http://product.suning.com/0*.html*"],
+    documentUrlPatterns: ["http://item.vjia.com/*.html*", "http://www.360buy.com/product/*.html*", "http://*.360buy.com/*.html*", "http://www.jd.com/product/*.html*", "http://*.jd.com/*.html*", "http://item.taobao.com/item.htm*id=*", "http://wt.taobao.com/detail.html*id=*", "http://detail.tmall.com/venus/spu_detail.htm*spu_id=*mallstItemId=*", "http://detail.tmall.com/item.htm*id*", "http://item.vancl.com/*.html*", "http://item.vt.vancl.com/*.html*", "http://www.amazon.cn/*dp*", "http://www.amazon.cn/gp/product/*"],
     createContextMenus: function() {
         _markJun_.contextMenusId = chrome.contextMenus.create({
             "documentUrlPatterns": _markJun_.documentUrlPatterns,
@@ -414,8 +408,56 @@ var _markJun_ = {
                     _markJun_.addUrl(url);
                     _markJun_.stat(102);
                 }
-
             }
         });
-    }
+    },
+    validUrls: [/^(http\:\/\/www\.360buy\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.360buy\.com\/\d+\.html).*$/i, /^(http\:\/\/www\.jd\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.jd\.com\/\d+\.html).*$/i, /^(http\:\/\/item\.taobao\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/wt\.taobao\.com\/detail\.html?\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/venus\/spu_detail\.htm\?(.*?)spu_id\=\d+(.*?)\&mallstItemId\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http:\/\/item\.vancl\.com\/\d+\.html).*/i, /^(http:\/\/item\.vjia\.com\/\d+\.html).*/i, /^(http:\/\/item\.vt\.vancl\.com\/\d+\.html).*/i, /^(http:\/\/www\.amazon\.cn\/(.*?)dp\/[A-Z0-9]+?)($|\/.*$)/i, /^(http:\/\/www\.amazon\.cn\/gp\/product\/[A-Z0-9]+?)($|\/.*$)/i],
+    _from_: {
+        '360buy': '京东',
+        'jd': '京东',
+        'taobao': '淘宝',
+        'tmall': '天猫',
+        'vancl': '凡客',
+        'vt': '凡客',
+        'vjia': '凡客',
+        'suning': '苏宁',
+        'amazon': '亚马逊'
+    },
+    _logo_: {
+        '360buy': 'jd',
+        'jd': 'jd',
+        'taobao': 'tb',
+        'tmall': 'tm',
+        'vancl': 'van',
+        'vt': 'van',
+        'vjia': 'van',
+        'amazon': 'amazon'
+    },
+    productStat: {
+        soldOut: 0x4,
+        restock: 0x2,
+        priceUp: 0x40,
+        priceDown: 0x20,
+        vpriceUp: 0x10,
+        vpriceDown: 0x8,
+        isOff: 0x1,
+    },
+    productChar: {
+        soldOut: '下架通知',
+        restock: '上架通知',
+        priceUp: '涨价通知',
+        priceDown: '降价通知',
+        vpriceUp: '折后价涨价通知',
+        vpriceDown: '折后价降价通知',
+        isOff: '',
+    },
+    productColor: {
+        soldOut: 'color:#999;',
+        restock: 'color:green;',
+        priceUp: 'color:#ccc;',
+        priceDown: 'color:green;',
+        vpriceUp: 'color:#ccc;',
+        vpriceDown: 'color:green;',
+        isOff: 'color:#999;',
+    },
 };
