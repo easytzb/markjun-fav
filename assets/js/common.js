@@ -348,8 +348,6 @@ var _markJun_ = {
         var time = this.timeString(info.utime);
         var from = this.from(info.u);
 
-        console.log(info)
-
         if (info.o == 1) {
             str += '<div class="locationname" style="';
             str += this.productColor.soldOut + '">';
@@ -387,7 +385,7 @@ var _markJun_ = {
         var delButton = '<div class="del" title="取消收藏" data="' + info.u + '"><img src="assets/images/delete.png" /></div>';
 
         if (isChanged) {
-            var refreshButton = '<div class="refresh" title="查看最新信息" data="' + info.u + '"><img src="assets/images/refresh.png" /></div>';
+            var refreshButton = '<div class="refresh" title="刷新信息" data="' + info.u + '"><img src="assets/images/refresh.png" /></div>';
         } else var refreshButton = "";
 
         var goButton = '<a class="kd-button kd-button-submit" href="' + url + '">GO</a>';
