@@ -96,35 +96,36 @@ var _markJun_ = {
             ov: null
         })
     },
-    clearChangedInfo: function() {
+    clearChangedInfo: function(key) {
 
-        if (this.notifyId) chrome.notifications.clear(this.notifyId, function(wasCleared) {
-            console.log(wasCleared)
-        });
-        this.notifyId = null;
-        for (var key in localStorage) {
-            if (key.indexOf('data_') !== 0) continue;
-            var info = JSON.parse(localStorage[key]);
-            if (info.otime || info.ptime || info.vtime) {
-                _markJun_.editUrl(info.u, {
-                    op: null,
-                    ptime: null,
-                    otime: null,
-                    vtime: null,
-                    ov: null
-                })
-            }
+        if (this.notifyId[key])
+            chrome.notifications.clear(key, function(wasCleared) {});
+
+        delete this.notifyId[key];
+
+        if (key.indexOf('data_') !== 0) return;
+
+        var info = JSON.parse(localStorage[key]);
+
+        if (info.otime || info.ptime || info.vtime) {
+            _markJun_.editUrl(info.u, {
+                op: null,
+                ptime: null,
+                otime: null,
+                vtime: null,
+                ov: null
+            })
         }
     },
-    openProduct: function() {
-        for (var key in localStorage) {
-            if (key.indexOf('data_') !== 0) continue;
-            var info = JSON.parse(localStorage[key]);
-            if (info.otime || info.ptime || info.vtime) {
-                chrome.tabs.create({
-                    url: info.u
-                });
-            }
+    openProduct: function(key) {
+        if (key.indexOf('data_') !== 0) return;
+
+        var info = JSON.parse(localStorage[key]);
+
+        if (info.otime || info.ptime || info.vtime) {
+            chrome.tabs.create({
+                url: info.u
+            });
         }
     },
     getChangeColor: function(changeCode) {
@@ -146,18 +147,6 @@ var _markJun_ = {
 
         return color;
     },
-
-    getChangeTitle: function(changeCode) {
-        changeCode = changeCode >> 1 << 1;
-        if (!(changeCode)) return '';
-
-        var str = "";
-        for (k in this.productStat) {
-            if (changeCode & this.productStat[k])
-                str += this.productChar[k];
-        }
-        return str;
-    },
     checkExist: function(url) {
         return this.getProductInfo(url)
     },
@@ -172,7 +161,6 @@ var _markJun_ = {
             success: _markJun_[successFunction]
         })
     },
-
     getPriceInfoSuccess: function(data) {
         _markJun_.updateCount++;
         if (!data) return;
@@ -232,17 +220,15 @@ var _markJun_ = {
         else if (diff >= 86400 * 7 && diff < 86400 * 30) str = parseInt(diff / 86400 / 7) + " 周前";
         else if (diff >= 86400 * 30 && diff < 86400 * 365) str = parseInt(diff / 86400 / 30) + " 月前";
         else str = parseInt(diff / 86400 / 365) + " 年前";
-        return str + '变动'
+        return str + '变动 ';
     },
     from: function(url) {
         var reg = /.+?\.(.+?)\./.exec(url);
-        console.log(reg,url)
         if (reg[1] == 'jd') reg[1] = '360buy';
-        return this._from_[reg[1]]
+        return '来自 ' + this._from_[reg[1]] + ' ';
     },
     logo: function(url) {
         var reg = /.+?\.(.+?)\./.exec(url);
-        console.log(reg, url)
         if (reg[1] == 'jd') reg[1] = '360buy';
         return this._logo_[reg[1]]
     },
@@ -279,27 +265,27 @@ var _markJun_ = {
             }
             if (changeCode & this.productStat.priceUp) {
                 desc = "价格：" + info.op + " 涨到 " + info.p;
-                desc += "，涨了 " + 
+                desc += "，涨了 " +
                     Math.abs(parseFloat(info.op) - parseFloat(info.p))
             }
             if (changeCode & this.productStat.priceDown) {
                 desc = "价格：" + info.op + " 降到 " + info.p
-                desc += "，降了 " + 
+                desc += "，降了 " +
                     Math.abs(parseFloat(info.op) - parseFloat(info.p))
             }
             if (changeCode & this.productStat.vpriceUp) {
-                desc = "折后价：" + info.ov + " 涨到 " + info.v
-                desc += "，涨了 " + 
+                desc = "促销价：" + info.ov + " 涨到 " + info.v
+                desc += "，涨了 " +
                     Math.abs(parseFloat(info.ov) - parseFloat(info.v))
             }
             if (changeCode & this.productStat.vpriceDown) {
-                desc = "折后价：" + info.ov + " 降到 " + info.v
-                desc += "，降了 " + 
+                desc = "促销价：" + info.ov + " 降到 " + info.v
+                desc += "，降了 " +
                     Math.abs(parseFloat(info.ov) - parseFloat(info.v))
             }
 
             opt.message = desc;
-            opt.title = info.t//this.getChangeTitle(changeCode);
+            opt.title = info.t //this.getChangeTitle(changeCode);
             opt.iconUrl = "assets/images/" + this.logo(info.u) + ".png";
             chrome.notifications.create(key, opt, function(notifyId) {
                 _markJun_.notifyId[notifyId] = 1;
@@ -320,7 +306,95 @@ var _markJun_ = {
         }
     },
     echo: function(str) {
-        console.log(str)
+        console.log(str);
+    },
+    oldStatusStr: function(info) {
+        var str = "";
+        var url = info.r ? info.r : info.u;
+        var time = this.timeString(info.utime);
+        var from = this.from(info.u);
+
+        if (info.o == 0 && info.otime) {
+            str += '<div class="locationname" style="';
+            str += this.productColor.restock + '">';
+            str += time + from + '</div>';
+            str += '<a class="kd-button price-button" href="';
+            str += url;
+            str += '"><span style="';
+            str += this.productColor.restock;
+            str += '">已下架</span></a>';
+            return str;
+        }
+
+        var changeCode = this.getChangeCode(info);
+        var color = this.getChangeColor(changeCode);
+        str += '<div class="locationname" style="';
+        str += color + '">';
+        str += time + from + '</div>';
+        str += '<a class="kd-button price-button" href="';
+        str += url;
+        str += '"><span style="';
+        str += color;
+        str += '">￥ ' + (info.op ? info.op : info.p);
+        if (info.v || info.ov) {
+            str += ' <span>|</span> ' + (info.ov ? info.ov : info.v) + ' (促)';
+        }
+        str += '</span></a>';
+        return str;
+    },
+    newStatusStr: function(info) {
+        var str = "";
+        var url = info.r ? info.r : info.u;
+        var time = this.timeString(info.utime);
+        var from = this.from(info.u);
+
+        console.log(info)
+
+        if (info.o == 1) {
+            str += '<div class="locationname" style="';
+            str += this.productColor.soldOut + '">';
+            str += time + from + '</div>';
+            str += '<a class="kd-button price-button" href="';
+            str += url;
+            str += '"><span style="';
+            str += this.productColor.soldOut;
+            str += '">已下架</span></a>';
+            return str;
+        }
+
+        str += '<div class="locationname" style="">';
+        str += time + from + '</div>';
+        str += '<a class="kd-button price-button" href="';
+        str += url;
+        str += '"><span>￥ ' + info.p;
+        if (info.v) {
+            str += ' <span>|</span> ' + info.v + ' (促)';
+        }
+        str += '</span></a>';
+        return str;
+    },
+    productStr: function(info) {
+        var url = info.r ? info.r : info.u;
+        var changeCode = this.getChangeCode(info);
+        var isChanged = changeCode >> 1 << 1;
+
+        var divImg = '<div class="imgcontainer"><img src="' + info.i + '"></div>';
+        var divName = '<div class="businessname" title="' + info.t + '">' + info.t + '</div>';
+
+        if (isChanged) var divFromPrice = this.oldStatusStr(info);
+        else var divFromPrice = this.newStatusStr(info);
+
+        var delButton = '<div class="del" title="取消收藏" data="' + info.u + '"><img src="assets/images/delete.png" /></div>';
+
+        if (isChanged) {
+            var refreshButton = '<div class="refresh" title="查看最新信息" data="' + info.u + '"><img src="assets/images/refresh.png" /></div>';
+        } else var refreshButton = "";
+
+        var goButton = '<a class="kd-button kd-button-submit" href="' + url + '">GO</a>';
+
+        var product = '<li class="product">' + divImg + divName + divFromPrice + goButton + delButton + refreshButton + '</li>';
+
+        return product;
     },
     addListener: function() {
         chrome.storage.onChanged.addListener(function(changes, namespace) {
@@ -367,48 +441,24 @@ var _markJun_ = {
         });
 
         chrome.notifications.onButtonClicked.addListener(function(nid, index) {
-            if (nid != _markJun_.notifyId) return;
+            if (!_markJun_.notifyId[nid]) return;
             if (0 == index) {
                 _markJun_.stat(110);
-                _markJun_.openProduct();
+                _markJun_.openProduct(nid);
             } else _markJun_.stat(111);
-            _markJun_.clearChangedInfo();
+            _markJun_.clearChangedInfo(nid);
         });
 
         chrome.notifications.onClosed.addListener(function(nid, byUser) {
-            if (nid != _markJun_.notifyId) return;
-            _markJun_.notifyId = null;
+            if (!_markJun_.notifyId[nid]) return;
+
+            delete _markJun_.notifyId[nid];
+
             if (byUser) _markJun_.stat(112);
         })
 
         chrome.runtime.onInstalled.addListener(function() {
             _markJun_.stat(100);
-        });
-    },
-    documentUrlPatterns: ["http://item.vjia.com/*.html*", "http://www.360buy.com/product/*.html*", "http://*.360buy.com/*.html*", "http://www.jd.com/product/*.html*", "http://*.jd.com/*.html*", "http://item.taobao.com/item.htm*id=*", "http://wt.taobao.com/detail.html*id=*", "http://detail.tmall.com/venus/spu_detail.htm*spu_id=*mallstItemId=*", "http://detail.tmall.com/item.htm*id*", "http://item.vancl.com/*.html*", "http://item.vt.vancl.com/*.html*", "http://www.amazon.cn/*dp*", "http://www.amazon.cn/gp/product/*"],
-    createContextMenus: function() {
-        _markJun_.contextMenusId = chrome.contextMenus.create({
-            "documentUrlPatterns": _markJun_.documentUrlPatterns,
-            "title": "mark君·网购收藏夹",
-            "contexts": ["page"],
-            'onclick': function(info, tab) {
-                url = tab.url;
-                res = _markJun_.checkExist(url);
-                if (res === false) return false;
-                if (res) {
-                    chrome.tabs.sendMessage(tab.id, {
-                        ope: "new"
-                    });
-                    _markJun_.delUrl(url);
-                    _markJun_.stat(105);
-                } else {
-                    chrome.tabs.sendMessage(tab.id, {
-                        ope: "added"
-                    });
-                    _markJun_.addUrl(url);
-                    _markJun_.stat(102);
-                }
-            }
         });
     },
     validUrls: [/^(http\:\/\/www\.360buy\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.360buy\.com\/\d+\.html).*$/i, /^(http\:\/\/www\.jd\.com\/product\/\d+\.html).*$/i, /^(http\:\/\/.*?\.jd\.com\/\d+\.html).*$/i, /^(http\:\/\/item\.taobao\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/wt\.taobao\.com\/detail\.html?\?(.*?)id\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/venus\/spu_detail\.htm\?(.*?)spu_id\=\d+(.*?)\&mallstItemId\=\d+).*?$/i, /^(http\:\/\/detail\.tmall\.com\/item\.htm\?(.*?)id\=\d+).*?$/i, /^(http:\/\/item\.vancl\.com\/\d+\.html).*/i, /^(http:\/\/item\.vjia\.com\/\d+\.html).*/i, /^(http:\/\/item\.vt\.vancl\.com\/\d+\.html).*/i, /^(http:\/\/www\.amazon\.cn\/(.*?)dp\/[A-Z0-9]+?)($|\/.*$)/i, /^(http:\/\/www\.amazon\.cn\/gp\/product\/[A-Z0-9]+?)($|\/.*$)/i],
@@ -447,16 +497,16 @@ var _markJun_ = {
         restock: '上架通知',
         priceUp: '涨价通知',
         priceDown: '降价通知',
-        vpriceUp: '折后价涨价通知',
-        vpriceDown: '折后价降价通知',
+        vpriceUp: '促销价涨价通知',
+        vpriceDown: '促销价降价通知',
         isOff: '',
     },
     productColor: {
         soldOut: 'color:#999;',
         restock: 'color:green;',
-        priceUp: 'color:#ccc;',
+        priceUp: 'color:red;',
         priceDown: 'color:green;',
-        vpriceUp: 'color:#ccc;',
+        vpriceUp: 'color:red;',
         vpriceDown: 'color:green;',
         isOff: 'color:#999;',
     },
