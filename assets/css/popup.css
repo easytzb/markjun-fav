@@ -23,3 +23,4 @@ a.price-button{margin: 4px 0;-webkit-user-select: none;float:left; background-po
 .green { color:#ccc; background-color:#ccc;}
 .isChanged{cursor:pointer;border:0px red solid;position:absolute; bottom:7px;left:6px;width:130px;background-color: transparent;}
 .refresh{background:url(../images/refresh.png);}
+.hide{display:none;}

@@ -56,10 +56,23 @@
             info = _markJun_.newStatusStr(info);
             $(this).parent().find('.businessname').after(info);
             _markJun_.clearChangedInfoByUrl(url)
-            $(this).remove();
+            $(this).removeClass('refresh').remove();
             return false;
         });
 
+        $('.refresh img').mouseover(function() {
+            $(this).parent().parent().find('.locationname,.price-button').remove();
+            var url = $(this).parent().attr('data');
+            var info = _markJun_.getProductInfo(url);
+            info = _markJun_.newStatusStr(info);
+            $(this).parent().parent().find('.businessname').after(info);
+        }).mouseout(function() {
+            $(this).parent().parent().find('.locationname,.price-button').remove();
+            var url = $(this).parent().attr('data');
+            var info = _markJun_.getProductInfo(url);
+            info = _markJun_.oldStatusStr(info);
+            $(this).parent().parent().find('.businessname').after(info);
+        });
         $('.del').live('click', function() {
             _markJun_.stat(104);
             _markJun_.delUrl($(this).attr('data'));

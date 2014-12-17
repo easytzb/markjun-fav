@@ -23,5 +23,5 @@
    "manifest_version": 2,
    "name": "网购收藏夹·Mark君",
    "permissions": [ "storage", "notifications", "tabs", "http://markjun.duapp.com/*", "http://127.0.0.1:89/*", "contextMenus" ],
-   "version": "1.2.3"
+   "version": "1.2.4"
 }
