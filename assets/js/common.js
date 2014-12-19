@@ -1,7 +1,6 @@
 var _markJun_ = {
     backend: 'http://127.0.0.1:89/',
     //backend: 'http://markjun.duapp.com/',
-    contextMenusId: 0,
     getKey: function(url) {
         return "data_" + Crypto.MD5(url);
     },
@@ -82,8 +81,6 @@ var _markJun_ = {
             if (oldPrice > newPrice) code |= this.productStat.vpriceDown;
             else if (oldPrice < newPrice) code |= this.productStat.vpriceUp;
         }
-
-        if (info.o) code |= this.productStat.isOn;
 
         return code;
     },
@@ -258,10 +255,10 @@ var _markJun_ = {
 
             var desc = "";
             if (changeCode & this.productStat.soldOut) {
-                desc = ""
+                desc = "已下架"
             }
             if (changeCode & this.productStat.restock) {
-                desc = ""
+                desc = "已上架"
             }
             if (changeCode & this.productStat.priceUp) {
                 desc = "价格：" + info.op + " 涨到 " + info.p;
